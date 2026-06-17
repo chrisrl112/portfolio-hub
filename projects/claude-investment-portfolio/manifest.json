@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "slug": "claude-investment-portfolio",
+  "name": "Claude Investment Portfolio",
+  "tagline": "A one-person fund with a full AI investment committee.",
+  "status": "beta",
+  "maturity": 3,
+  "started": "2025-10",
+  "accent": "ledger-amber",
+  "accent_hex": "#E0A53B",
+  "visibility": { "public": true },
+  "stack": [
+    "Claude (multi-agent, staged sessions)",
+    "staged research pipeline (Scout -> Red Team -> Committee -> Monitoring)",
+    "markdown holdings ledger (Holdings_Master.md)",
+    "Supabase (heartbeat) [planned]"
+  ],
+  "ai_roles": [
+    "researcher",
+    "red-team",
+    "committee-chair",
+    "bull",
+    "bear",
+    "monitor"
+  ],
+  "loops": [
+    {
+      "cadence": "per theme",
+      "name": "Intake -> parallel research agents work up the thesis (AI-run, human-initiated)",
+      "automation": "full"
+    },
+    {
+      "cadence": "per theme",
+      "name": "Red-team review — adversary attacks the thesis on purpose (AI-run, human-initiated)",
+      "automation": "full"
+    },
+    {
+      "cadence": "per theme",
+      "name": "Committee debate (bull / bear / chair) -> structured verdict (AI-run, human-initiated)",
+      "automation": "full"
+    },
+    {
+      "cadence": "per cycle",
+      "name": "Monitor sweep — flag drift from thesis, re-raise to committee (AI-run, human-initiated)",
+      "automation": "full"
+    },
+    {
+      "cadence": "on verdict",
+      "name": "Portfolio structuring / position changes",
+      "automation": "human-approve"
+    }
+  ],
+  "demo": {
+    "type": "watch-only",
+    "url": "/projects/claude-investment-portfolio#live"
+  },
+  "links": {
+    "page": "/projects/claude-investment-portfolio"
+  },
+  "metrics": [
+    { "label": "Committee cycles run", "source": "heartbeat", "key": "committee_cycles" },
+    { "label": "Research reports generated", "source": "heartbeat", "key": "reports_generated" },
+    { "label": "Last committee date", "source": "heartbeat", "key": "last_committee_date" }
+  ],
+  "patterns": [
+    "adversarial-review",
+    "committee-synthesis",
+    "researcher-critic-editor",
+    "human-approve-gate",
+    "heartbeat-monitoring"
+  ]
+}

@@ -32,6 +32,32 @@ runs live demos of every system I build. Brand: **Compound Interests**
   persistent memory across sessions.
 - Voice for copy: direct, engineering-forward, quantified, no hype.
 
+## How the hub is wired (P1 scaffold)
+- **Manifests load + validate at build time** via `src/lib/manifests.ts`
+  (`getProjects()`, `getProject()`). It globs `projects/*/manifest.json`,
+  validates each against `schema/manifest.schema.json` with ajv, and also
+  checks slug↔directory and `links.page` agreement. A bad manifest throws and
+  **fails the build** (verified). Don't render manifest data without going
+  through this loader.
+- **Adding a project** (the §9.2 runbook, in repo terms): create
+  `projects/<slug>/` with `manifest.json`, `flowchart.mmd` (Mermaid source),
+  and `case-study.mdx`. The slug must match the directory name and
+  `links.page` must equal `/projects/<slug>`. Tile + page appear automatically.
+- **Project page template:** `src/pages/projects/[slug].astro` owns section 01
+  (Hero) + chrome from the manifest; `case-study.mdx` supplies the §4.3
+  narrative (sections 02–09) using the shared components in
+  `src/components/casestudy/` (`Section`, `Loops`, `Roles`, `Demo`,
+  `MetricDefs`, `Mermaid`). Keep the section order and `n="0X"` numbering.
+- **MDX gotcha:** no raw `<style>` blocks inside `.mdx` — MDX parses CSS `{` as
+  a JS expression and the build fails. Put styles in `global.css`.
+- **Metrics are placeholders until P2.** Values render as `—` with
+  `data-metric-key` / `data-metric-source` hooks for heartbeat hydration. Never
+  hand-key a fake number (§9.4 — no page silently lies).
+- **Styling:** Tailwind v4 via `@tailwindcss/vite`; design tokens (dark
+  industrial-luxe, status-light motif) live in `src/styles/global.css`. One
+  accent per project, set from `manifest.accent_hex` onto `--accent`.
+- **Diagrams:** Mermaid renders client-side (v1); React Flow is the v2 upgrade.
+
 ## Phase order (§8) — do not skip ahead
 P0 rails (this) → P1 hub MVP → P2 live layer → P3 automation → P4 polish.
 Ship P1 before touching P2.

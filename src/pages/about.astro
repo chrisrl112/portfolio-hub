@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About" description="Systems builder. I design, ship, and operate multi-agent AI systems.">
+  <section class="wrap">
+    <p class="kicker">About</p>
+    <h1>I build AI systems that run my life — and operate them.</h1>
+    <p class="sub">
+      Full bio, resume, and contact land in P1 (§4.1). For now: the systems
+      catalogue is the resume — start there.
+    </p>
+    <a href="/#systems" class="link mono">→ see the systems</a>
+  </section>
+</BaseLayout>
+
+<style>
+  section {
+    padding-top: 4rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0.5rem 0 0;
+    max-width: 18ch;
+  }
+  .sub {
+    color: var(--fg-muted);
+    max-width: 52ch;
+    margin-top: 1rem;
+  }
+  .link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+</style>

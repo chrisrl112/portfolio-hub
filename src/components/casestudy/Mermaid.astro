@@ -1,0 +1,60 @@
+---
+interface Props {
+  code: string;
+}
+const { code } = Astro.props;
+---
+
+<figure class="mmd">
+  <pre class="mermaid">{code}</pre>
+  <figcaption class="mono">Mermaid · system flowchart (interactive pan/zoom upgrade lands in v2)</figcaption>
+</figure>
+
+<script>
+  import mermaid from 'mermaid';
+
+  const accent =
+    getComputedStyle(document.body).getPropertyValue('--accent').trim() ||
+    '#3fb562';
+
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'strict',
+    themeVariables: {
+      darkMode: true,
+      background: '#0e1013',
+      primaryColor: '#14171b',
+      primaryBorderColor: accent,
+      primaryTextColor: '#e8eaed',
+      lineColor: '#6b7280',
+      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+    },
+  });
+
+  mermaid.run({ querySelector: 'pre.mermaid' });
+</script>
+
+<style>
+  .mmd {
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: 0.6rem;
+    background: var(--ink-850);
+    padding: 1.25rem;
+    overflow-x: auto;
+  }
+  .mermaid {
+    margin: 0;
+    text-align: center;
+    /* Source stays legible if mermaid fails to render (offline build/runtime). */
+    font-size: 0.8rem;
+    color: var(--fg-dim);
+  }
+  figcaption {
+    margin-top: 0.75rem;
+    font-size: 0.7rem;
+    color: var(--fg-dim);
+    text-align: center;
+  }
+</style>

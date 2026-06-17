@@ -1,0 +1,85 @@
+---
+import type { Loop, LoopAutomation } from '@lib/manifests';
+
+interface Props {
+  loops: Loop[];
+}
+const { loops } = Astro.props;
+
+const automationColor: Record<LoopAutomation, string> = {
+  full: 'var(--live)',
+  'human-approve': 'var(--beta)',
+  manual: 'var(--concept)',
+};
+---
+
+<div class="loops">
+  <table>
+    <thead>
+      <tr>
+        <th>Cadence</th>
+        <th>What happens</th>
+        <th>Automation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        loops.map((l) => (
+          <tr>
+            <td class="cadence mono">{l.cadence}</td>
+            <td>{l.name}</td>
+            <td>
+              <span class="auto" style={`--c: ${automationColor[l.automation]}`}>
+                {l.automation}
+              </span>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .loops {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+  td {
+    padding: 0.7rem 0.75rem;
+    border-bottom: 1px solid var(--line-soft);
+    vertical-align: top;
+    color: var(--fg-muted);
+  }
+  .cadence {
+    white-space: nowrap;
+    color: var(--fg);
+    font-size: 0.82rem;
+  }
+  .auto {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--c);
+    border: 1px solid color-mix(in srgb, var(--c) 40%, var(--line));
+    background: color-mix(in srgb, var(--c) 9%, transparent);
+    border-radius: 0.3rem;
+    padding: 0.15rem 0.5rem;
+    white-space: nowrap;
+  }
+</style>

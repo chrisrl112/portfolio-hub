@@ -1,0 +1,120 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  accent?: string;
+}
+
+const {
+  title,
+  description = 'Compound Interests — a hub that catalogues, pitches, and runs live demos of every AI system I build.',
+  accent,
+} = Astro.props;
+
+const fullTitle =
+  title === 'Compound Interests' ? title : `${title} · Compound Interests`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+  </head>
+  <body style={accent ? `--accent: ${accent}` : undefined}>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a href="/" class="brand">
+          <span class="brand-dot" aria-hidden="true"></span>
+          <span class="brand-name">Compound Interests</span>
+        </a>
+        <nav class="site-nav">
+          <a href="/#systems">Systems</a>
+          <a href="/patterns">Patterns</a>
+          <a href="/about">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <span class="footer-mark">Compound Interests</span>
+        <span class="footer-tag">Systems that compound.</span>
+      </div>
+    </footer>
+
+    <style>
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(10px);
+        background: color-mix(in srgb, var(--ink-900) 82%, transparent);
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 3.5rem;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        text-decoration: none;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        letter-spacing: 0.04em;
+      }
+      .brand-dot {
+        width: 0.6rem;
+        height: 0.6rem;
+        border-radius: 999px;
+        background: var(--accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+      }
+      .site-nav {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--fg-muted);
+      }
+      .site-nav a {
+        text-decoration: none;
+      }
+      .site-nav a:hover {
+        color: var(--fg);
+      }
+      .site-footer {
+        margin-top: 5rem;
+        border-top: 1px solid var(--line-soft);
+        padding-block: 2rem;
+      }
+      .footer-inner {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        color: var(--fg-dim);
+        font-size: 0.85rem;
+      }
+      .footer-mark {
+        font-family: var(--font-mono);
+        color: var(--fg-muted);
+      }
+    </style>
+  </body>
+</html>

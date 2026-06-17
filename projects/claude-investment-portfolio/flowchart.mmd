@@ -1,0 +1,14 @@
+flowchart TD
+  THEME["Theme intake"] --> R["Research agents<br/>(parallel)"]
+  R --> RED["Red-team review<br/>(adversarial)"]
+  RED --> COMM["Committee<br/>bull · bear · chair"]
+  COMM --> VERDICT{"Verdict"}
+  VERDICT -->|advance| STRUCT["Structurer<br/>sizing & role"]
+  VERDICT -->|kill| ARCHIVE["Archive thesis"]
+  STRUCT --> GATE{"Human<br/>approve?"}
+  GATE -->|approved| BOOK["Portfolio"]
+  GATE -->|rejected| ARCHIVE
+  BOOK --> MON["Monitor loop"]
+  MON -->|drift detected| COMM
+  WEEK["Weekly cycle"] -.->|kicks off| THEME
+  WEEK -.->|sweeps| MON

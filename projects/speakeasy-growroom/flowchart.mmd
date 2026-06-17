@@ -1,0 +1,27 @@
+flowchart TD
+  subgraph CLIMATE["Climate control"]
+    CTRL["VIVOSUN GrowHub<br/>controller"]
+    A["Actuators<br/>lights · fans · humidifier · heater"]
+  end
+  CTRL --> A
+
+  subgraph HOST["Mac host"]
+    INGEST["Telemetry ingest<br/>emulator+OCR → VIVOSUN cloud API"]
+  end
+  CTRL -->|temp · RH| INGEST
+
+  INGEST -->|~30 min| TEL["Telemetry sweep"]
+  TEL --> STORE[("Status store<br/>Supabase")]
+
+  PHOTO["Daily photo log"] --> REPORT["Claude<br/>daily-reporter"]
+  TEL --> REPORT
+  REPORT --> OVERLAY["Twitch overlay"]
+
+  TEL --> CHECK{"Reading<br/>off-band?"}
+  CHECK -->|no| STORE
+  CHECK -->|yes| ANOM["Claude<br/>anomaly-analyst"]
+  ANOM --> ALERT["Alert to Chris"]
+
+  WEEK["Weekly plan revision<br/>drafted by AI"] --> GATE{"Human<br/>approve?"}
+  GATE -->|approved| CTRL
+  GATE -->|rejected| WEEK

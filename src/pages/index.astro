@@ -1,17 +1,173 @@
 ---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ProjectCard from '@components/ProjectCard.astro';
+import { getProjects, type ManifestStatus } from '@lib/manifests';
 
+const projects = getProjects();
+
+const statusColor: Record<ManifestStatus, string> = {
+  live: 'var(--live)',
+  beta: 'var(--beta)',
+  concept: 'var(--concept)',
+  dormant: 'var(--dormant)',
+  retired: 'var(--retired)',
+};
+const liveCount = projects.filter((p) => p.status === 'live').length;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Compound Interests">
+  <section class="hero wrap">
+    <p class="kicker">Compound Interests · Systems that compound</p>
+    <h1 class="hero-line">
+      I don't use AI tools. I build AI systems that run my life — and here they
+      are, running.
+    </h1>
+    <p class="hero-sub">
+      A hub that catalogues, pitches, and runs live demos of every system I
+      build. Production systems with uptime, loops, and real-life outcomes —
+      not weekend toys.
+    </p>
+
+    <div class="status-strip" role="list" aria-label="System status">
+      {
+        projects.map((p) => (
+          <a
+            class="strip-item"
+            role="listitem"
+            href={p.links.page}
+            style={`--dot: ${statusColor[p.status]}`}
+          >
+            <span class="strip-dot" class:list={[{ pulse: p.status === 'live' }]} />
+            <span class="strip-name">{p.name}</span>
+            <span class="strip-status mono">{p.status}</span>
+          </a>
+        ))
+      }
+    </div>
+    <p class="strip-note mono">
+      {liveCount} live · {projects.length} systems catalogued · last-activity
+      ticker wires up with heartbeats (P2)
+    </p>
+  </section>
+
+  <section id="systems" class="systems wrap">
+    <div class="systems-head">
+      <h2>The systems</h2>
+      <p class="kicker">{projects.length} catalogued</p>
+    </div>
+    <div class="grid">
+      {projects.map((p) => <ProjectCard project={p} />)}
+    </div>
+  </section>
+
+  <section class="patterns-teaser wrap">
+    <a href="/patterns" class="teaser-link">
+      The same patterns power everything here — adversarial review, committee
+      synthesis, daily loops, human-approve gates →
+    </a>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-top: 4.5rem;
+    padding-bottom: 3rem;
+  }
+  .hero-line {
+    max-width: 22ch;
+    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+    margin: 0.8rem 0 0;
+  }
+  .hero-sub {
+    max-width: 52ch;
+    margin-top: 1.1rem;
+    color: var(--fg-muted);
+    font-size: 1.05rem;
+  }
+  .status-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 2rem;
+  }
+  .strip-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    text-decoration: none;
+    border: 1px solid var(--line);
+    background: var(--ink-850);
+    border-radius: 999px;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+    transition: border-color 0.18s ease;
+  }
+  .strip-item:hover {
+    border-color: color-mix(in srgb, var(--dot) 55%, var(--line));
+  }
+  .strip-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    background: var(--dot);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--dot) 20%, transparent);
+  }
+  .strip-status {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .pulse {
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--dot) 55%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 5px color-mix(in srgb, var(--dot) 0%, transparent);
+    }
+  }
+  .strip-note {
+    margin-top: 0.9rem;
+    font-size: 0.74rem;
+    color: var(--fg-dim);
+  }
+  .systems {
+    padding-top: 2rem;
+  }
+  .systems-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line-soft);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .systems-head h2 {
+    margin: 0;
+    font-size: 1.6rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    gap: 1.1rem;
+  }
+  .patterns-teaser {
+    padding-top: 3rem;
+  }
+  .teaser-link {
+    display: block;
+    color: var(--fg-muted);
+    text-decoration: none;
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 1.5rem;
+  }
+  .teaser-link:hover {
+    color: var(--fg);
+  }
+</style>

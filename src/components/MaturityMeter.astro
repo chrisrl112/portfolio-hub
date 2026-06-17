@@ -1,0 +1,41 @@
+---
+interface Props {
+  maturity: number;
+  showLabel?: boolean;
+}
+const { maturity, showLabel = true } = Astro.props;
+const steps = [1, 2, 3, 4, 5];
+---
+
+<span class="meter" title={`Maturity ${maturity} / 5`}>
+  <span class="bars" aria-hidden="true">
+    {steps.map((s) => <span class:list={['bar', { on: s <= maturity }]} />)}
+  </span>
+  {showLabel && <span class="label">{maturity}/5</span>}
+</span>
+
+<style>
+  .meter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .bars {
+    display: inline-flex;
+    gap: 0.18rem;
+  }
+  .bar {
+    width: 0.55rem;
+    height: 0.85rem;
+    border-radius: 1px;
+    background: var(--ink-600);
+  }
+  .bar.on {
+    background: var(--accent);
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--fg-dim);
+  }
+</style>

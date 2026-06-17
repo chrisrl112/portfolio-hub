@@ -1,0 +1,59 @@
+---
+import type { ManifestStatus } from '@lib/manifests';
+
+interface Props {
+  status: ManifestStatus;
+}
+const { status } = Astro.props;
+
+const colors: Record<ManifestStatus, string> = {
+  live: 'var(--live)',
+  beta: 'var(--beta)',
+  concept: 'var(--concept)',
+  dormant: 'var(--dormant)',
+  retired: 'var(--retired)',
+};
+const color = colors[status];
+---
+
+<span class="badge" style={`--dot: ${color}`}>
+  <span class="dot" class:list={[{ pulse: status === 'live' }]} aria-hidden="true"
+  ></span>
+  {status}
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.25rem 0.6rem;
+    background: var(--ink-800);
+  }
+  .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--dot);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--dot) 20%, transparent);
+  }
+  .pulse {
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--dot) 55%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 5px color-mix(in srgb, var(--dot) 0%, transparent);
+    }
+  }
+</style>

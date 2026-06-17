@@ -1,0 +1,61 @@
+---
+import type { Metric } from '@lib/manifests';
+
+interface Props {
+  metrics: Metric[];
+}
+const { metrics } = Astro.props;
+---
+
+<dl class="defs">
+  {
+    metrics.map((m) => (
+      <div class="def">
+        <dt>
+          <code>{m.key}</code>
+          <span class="src mono">{m.source}</span>
+        </dt>
+        <dd>{m.label}</dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .defs {
+    margin: 0.5rem 0 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .def {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 0.75rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  dt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  dt code {
+    color: var(--accent);
+    font-size: 0.85rem;
+  }
+  .src {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    border: 1px solid var(--line);
+    border-radius: 0.25rem;
+    padding: 0.05rem 0.4rem;
+  }
+  dd {
+    margin: 0;
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+  }
+</style>

@@ -1,0 +1,160 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://chrisliquin.com/schema/manifest.schema.json",
+  "title": "Compound Interests — Project Manifest v1",
+  "description": "The keystone of the hub-and-spoke contract (BUILD_BRIEF §3.2, §3.3). Every project publishes exactly one manifest. A typo'd manifest must FAIL the build, not render a broken tile.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "slug",
+    "name",
+    "tagline",
+    "status",
+    "maturity",
+    "started",
+    "visibility",
+    "stack",
+    "ai_roles",
+    "loops",
+    "demo",
+    "links",
+    "metrics",
+    "patterns"
+  ],
+  "properties": {
+    "schema_version": {
+      "description": "Manifest schema version. Bump only on breaking schema changes.",
+      "const": "1.0"
+    },
+    "slug": {
+      "description": "URL-safe identifier. Must match the project directory name and the page route.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tagline": {
+      "description": "One sentence. Direct, engineering-forward, quantified, no hype.",
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "description": "Set by the owner; auto-overridden to 'dormant' if no heartbeat in 14 days (§9.4).",
+      "type": "string",
+      "enum": ["live", "beta", "concept", "dormant", "retired"]
+    },
+    "maturity": {
+      "description": "1-5. Honest maturity; tiles may render this as a progress treatment.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "started": {
+      "description": "Month the project began, YYYY-MM.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+    },
+    "accent": {
+      "description": "Per-project accent token name (one accent color per project, §4.5).",
+      "type": "string"
+    },
+    "accent_hex": {
+      "description": "Accent anchor color, #RRGGBB.",
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "visibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["public"],
+      "properties": {
+        "public": { "type": "boolean" }
+      }
+    },
+    "stack": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "ai_roles": {
+      "description": "Named agent roles (monitor, red-team, committee-chair, coach...). Recurs across projects -> feeds the Patterns page.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "loops": {
+      "description": "The 'I build systems' proof. Renders directly into the Loops table (§4.3 #3).",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["cadence", "name", "automation"],
+        "properties": {
+          "cadence": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "automation": {
+            "description": "Human-in-the-loop posture. The single most employer-impressive field on the site.",
+            "type": "string",
+            "enum": ["full", "human-approve", "manual"]
+          }
+        }
+      }
+    },
+    "demo": {
+      "description": "Every project must declare something. 'fallback' is MANDATORY for embeds (R2).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["embed", "launch", "video", "watch-only"]
+        },
+        "url": { "type": "string" },
+        "fallback": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "embed" } } },
+          "then": { "required": ["url", "fallback"] }
+        }
+      ]
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page"],
+      "properties": {
+        "live": { "type": "string" },
+        "repo": { "type": "string" },
+        "page": { "type": "string", "pattern": "^/projects/[a-z0-9]+(-[a-z0-9]+)*$" }
+      }
+    },
+    "metrics": {
+      "description": "Headline metric definitions. Keys map to heartbeat payload keys (§3.3).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "source", "key"],
+        "properties": {
+          "label": { "type": "string", "minLength": 1 },
+          "source": {
+            "type": "string",
+            "enum": ["heartbeat", "changelog", "manifest"]
+          },
+          "key": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "patterns": {
+      "description": "Tags linking to the Patterns library (§4.4).",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" }
+    }
+  }
+}

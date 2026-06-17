@@ -1,0 +1,33 @@
+---
+import type { Metric } from '@lib/manifests';
+
+interface Props {
+  metric: Metric;
+}
+const { metric } = Astro.props;
+// Heartbeat wiring lands in P2 (live layer). Until then values render as a
+// labeled placeholder rather than a fabricated number — no page silently lies (§9.4).
+---
+
+<div class="stat" data-metric-key={metric.key} data-metric-source={metric.source}>
+  <span class="value mono" data-metric-value>—</span>
+  <span class="label">{metric.label}</span>
+</div>
+
+<style>
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1;
+  }
+  .label {
+    font-size: 0.78rem;
+    color: var(--fg-dim);
+  }
+</style>

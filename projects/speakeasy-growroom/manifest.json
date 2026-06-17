@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "slug": "speakeasy-growroom",
+  "name": "Speakeasy Growroom",
+  "tagline": "A fully automated grow operation with an AI agronomist on staff 24/7.",
+  "status": "live",
+  "maturity": 4,
+  "started": "2025-11",
+  "accent": "grow-green",
+  "accent_hex": "#3FB562",
+  "visibility": { "public": true },
+  "stack": [
+    "VIVOSUN GrowHub controller (climate)",
+    "Mac host (vitals pipeline + dashboard)",
+    "VIVOSUN cloud API ingest (migrating from emulator + OCR)",
+    "Claude API",
+    "OBS + Twitch",
+    "Supabase (heartbeat) [planned]"
+  ],
+  "ai_roles": ["monitor", "anomaly-analyst", "daily-reporter"],
+  "loops": [
+    {
+      "cadence": "~30 min",
+      "name": "Telemetry sweep — temperature + humidity read from the VIVOSUN feed and pushed to the status store",
+      "automation": "full"
+    },
+    {
+      "cadence": "daily",
+      "name": "Photo log + AI growth report (telemetry + image -> written daily report -> stream overlay)",
+      "automation": "full"
+    },
+    {
+      "cadence": "daily",
+      "name": "Anomaly check — readings compared against target bands; alert fires if off-band",
+      "automation": "full"
+    },
+    {
+      "cadence": "weekly",
+      "name": "Nutrient / environment plan revision drafted by the AI agronomist",
+      "automation": "human-approve"
+    }
+  ],
+  "demo": {
+    "type": "embed",
+    "url": "https://player.twitch.tv/?channel=CHANNEL&parent=chrisliquin.com",
+    "fallback": "timelapse"
+  },
+  "links": {
+    "page": "/projects/speakeasy-growroom"
+  },
+  "metrics": [
+    { "label": "Days running", "source": "heartbeat", "key": "uptime_days" },
+    { "label": "Cycle day", "source": "heartbeat", "key": "cycle_day" },
+    { "label": "Anomalies caught", "source": "heartbeat", "key": "alerts_total" }
+  ],
+  "patterns": [
+    "daily-loop",
+    "heartbeat-monitoring",
+    "anomaly-escalation",
+    "human-approve-gate"
+  ]
+}

@@ -1,0 +1,148 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import StatusBadge from '@components/StatusBadge.astro';
+import MaturityMeter from '@components/MaturityMeter.astro';
+import MetricStat from '@components/MetricStat.astro';
+import { getProjects, type Manifest } from '@lib/manifests';
+
+export async function getStaticPaths() {
+  return getProjects().map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: Manifest;
+}
+const { project } = Astro.props;
+
+// Each project's case study (sections 2–9) lives beside its manifest as MDX.
+const studies = import.meta.glob<{ Content: any }>('/projects/*/case-study.mdx');
+const importer = studies[`/projects/${project.slug}/case-study.mdx`];
+if (!importer) {
+  throw new Error(
+    `Missing case study: projects/${project.slug}/case-study.mdx (required by §4.3).`,
+  );
+}
+const { Content } = await importer();
+
+const ctaVerb = {
+  embed: 'Watch it live',
+  launch: 'Use it live',
+  video: 'Watch the walkthrough',
+  'watch-only': 'Read the committee’s last debate',
+}[project.demo.type];
+
+const accent = project.accent_hex;
+const started = new Date(`${project.started}-01T00:00:00`).toLocaleDateString(
+  'en-US',
+  { month: 'short', year: 'numeric' },
+);
+---
+
+<BaseLayout title={project.name} description={project.tagline} accent={accent}>
+  <article class="case-study">
+    <!-- 01 · Hero -->
+    <header class="hero wrap">
+      <a href="/#systems" class="back mono">← all systems</a>
+      <div class="hero-badges">
+        <StatusBadge status={project.status} />
+        <MaturityMeter maturity={project.maturity} />
+        <span class="started mono">since {started}</span>
+      </div>
+      <h1>{project.name}</h1>
+      <p class="tagline">{project.tagline}</p>
+
+      <div class="hero-metrics">
+        {project.metrics.map((m) => <MetricStat metric={m} />)}
+      </div>
+
+      <a class="cta" href="#live">{ctaVerb} →</a>
+
+      <ul class="stack mono" aria-label="Stack">
+        {project.stack.map((s) => <li>{s}</li>)}
+      </ul>
+    </header>
+
+    <div class="wrap body">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-top: 2.5rem;
+    padding-bottom: 1rem;
+  }
+  .back {
+    display: inline-block;
+    font-size: 0.78rem;
+    color: var(--fg-dim);
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+  }
+  .back:hover {
+    color: var(--fg);
+  }
+  .hero-badges {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .started {
+    font-size: 0.72rem;
+    color: var(--fg-dim);
+  }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+  }
+  .tagline {
+    margin: 0.75rem 0 0;
+    color: var(--fg-muted);
+    font-size: 1.15rem;
+    max-width: 60ch;
+  }
+  .hero-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    margin-top: 2rem;
+  }
+  .cta {
+    display: inline-block;
+    margin-top: 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--ink-900);
+    background: var(--accent);
+    text-decoration: none;
+    padding: 0.6rem 1.1rem;
+    border-radius: 0.4rem;
+    font-weight: 600;
+  }
+  .cta:hover {
+    filter: brightness(1.08);
+  }
+  .stack {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0;
+    margin: 2rem 0 0;
+  }
+  .stack li {
+    font-size: 0.72rem;
+    color: var(--fg-dim);
+    border: 1px solid var(--line-soft);
+    border-radius: 0.3rem;
+    padding: 0.2rem 0.55rem;
+  }
+  .body {
+    margin-top: 1rem;
+  }
+</style>

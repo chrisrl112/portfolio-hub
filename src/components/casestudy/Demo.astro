@@ -1,0 +1,78 @@
+---
+import type { Demo, DemoType } from '@lib/manifests';
+
+interface Props {
+  demo: Demo;
+}
+const { demo } = Astro.props;
+
+const verb: Record<DemoType, string> = {
+  embed: 'Watch it live',
+  launch: 'Use it live',
+  video: 'Watch the walkthrough',
+  'watch-only': 'Watch the process',
+};
+const note: Record<DemoType, string> = {
+  embed: 'Live Twitch embed — degrades to the latest timelapse when the stream is offline.',
+  launch: 'Public read-only demo mode (no real user data).',
+  video: '60–90s screen capture stands in until a live surface exists.',
+  'watch-only': 'Read-only dashboard + committee transcript gallery.',
+};
+---
+
+<div class="demo">
+  <div class="demo-head">
+    <span class="demo-type mono">{demo.type}</span>
+    <span class="demo-verb">{verb[demo.type]}</span>
+  </div>
+  <p class="demo-note">{note[demo.type]}</p>
+  <div class="demo-meta mono">
+    {demo.url && <span>target: {demo.url}</span>}
+    {demo.fallback && <span>fallback: {demo.fallback}</span>}
+    <span class="pending">live surface wires up post-MVP (P2 / P4)</span>
+  </div>
+</div>
+
+<style>
+  .demo {
+    border: 1px dashed color-mix(in srgb, var(--accent) 45%, var(--line));
+    border-radius: 0.6rem;
+    padding: 1.25rem;
+    background: color-mix(in srgb, var(--accent) 6%, var(--ink-850));
+  }
+  .demo-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .demo-type {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+    border-radius: 0.3rem;
+    padding: 0.15rem 0.5rem;
+  }
+  .demo-verb {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+  }
+  .demo-note {
+    margin: 0.6rem 0 0;
+    color: var(--fg-muted);
+    font-size: 0.92rem;
+  }
+  .demo-meta {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    font-size: 0.72rem;
+    color: var(--fg-dim);
+  }
+  .pending {
+    color: var(--accent);
+    opacity: 0.8;
+  }
+</style>

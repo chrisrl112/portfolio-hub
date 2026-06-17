@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "slug": "fitness-os",
+  "name": "Fitness OS",
+  "tagline": "Watch a system get built — a training operating system, in the open.",
+  "status": "beta",
+  "maturity": 2,
+  "started": "2026-05",
+  "accent": "signal-blue",
+  "accent_hex": "#3B82F6",
+  "visibility": { "public": true },
+  "stack": [
+    "Claude API",
+    "Fitbee (nutrition) + Hevy CSV export (workouts) ingest",
+    "programming loop",
+    "Supabase (heartbeat)"
+  ],
+  "ai_roles": ["ingest", "programmer", "reviewer"],
+  "loops": [
+    {
+      "cadence": "continuous",
+      "name": "Ingest — workouts (Hevy CSV export) + calories/macros (Fitbee), joined to the weekly weigh-in (v1 loop being defined)",
+      "automation": "full"
+    },
+    {
+      "cadence": "weekly",
+      "name": "Programming loop — AI drafts next week from last week's actuals",
+      "automation": "human-approve"
+    },
+    {
+      "cadence": "weekly",
+      "name": "Weigh-in + calorie adjustment vs the 12-week glide path",
+      "automation": "human-approve"
+    },
+    {
+      "cadence": "monthly",
+      "name": "Performance-review memo — trends, adherence, what to change (draft auto-generated; acting on it is human-approve)",
+      "automation": "full"
+    },
+    {
+      "cadence": "quarterly",
+      "name": "Program redesign",
+      "automation": "human-approve"
+    }
+  ],
+  "demo": {
+    "type": "video",
+    "url": "/projects/fitness-os#live"
+  },
+  "links": {
+    "page": "/projects/fitness-os"
+  },
+  "metrics": [
+    { "label": "Adherence (this block)", "source": "heartbeat", "key": "adherence_pct" },
+    { "label": "Weeks programmed by the loop", "source": "heartbeat", "key": "weeks_programmed" },
+    { "label": "Current phase", "source": "heartbeat", "key": "phase_label" }
+  ],
+  "patterns": [
+    "human-approve-gate",
+    "heartbeat-monitoring"
+  ]
+}

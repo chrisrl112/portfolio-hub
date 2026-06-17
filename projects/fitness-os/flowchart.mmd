@@ -1,0 +1,14 @@
+flowchart TD
+  EXPORT["Hevy CSV (workouts)<br/>+ Fitbee (nutrition)"] --> INGEST["Ingest<br/>(normalize actuals)"]
+  INGEST --> ACTUALS[("Last week's actuals")]
+  ACTUALS --> PROG["Programmer<br/>drafts next week"]
+  PROG --> GATE{"Human<br/>approve?"}
+  GATE -->|approved| WEEK["Next week's<br/>training + macros"]
+  GATE -->|adjust| PROG
+  WEEK --> TRAIN["Train + log<br/>(Hevy + Fitbee)"]
+  TRAIN --> EXPORT
+  ACTUALS --> MEMO["Reviewer<br/>monthly memo"]
+  MEMO --> QTR["Quarterly redesign"]
+  QTR -.->|resets| PROG
+  TRAIN --> METRICS["Adherence % · trends"]
+  METRICS --> HEART[("Heartbeat")]

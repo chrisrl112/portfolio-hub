@@ -1,0 +1,13 @@
+flowchart TD
+  CUR["Curriculum-designer<br/>(what to work on)"] --> GEN["Session-generator<br/>(today's block)"]
+  GEN --> COACH["Coach<br/>(frames the block)"]
+  COACH --> PLAY["Practice session<br/>play against backing band"]
+  PLAY --> LOG["Per-block logging<br/>(A1 — keystone)"]
+  LOG --> REVIEW["Day Review"]
+  REVIEW --> METRICS["Streak · sessions · hours"]
+  METRICS --> HEART[("Heartbeat")]
+  REVIEW --> WEEK["Weekly curriculum review"]
+  WEEK --> GATE{"Human<br/>approve?"}
+  GATE -->|approved| CUR
+  GATE -->|rejected| WEEK
+  REVIEW -.->|export bridge| MC["mission-control.json<br/>→ morning loop"]

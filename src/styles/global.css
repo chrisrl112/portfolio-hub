@@ -1,0 +1,160 @@
+@import 'tailwindcss';
+
+/*
+  Compound Interests — design tokens (BUILD_BRIEF §4.5)
+  Dark, industrial-luxe, editorial typography, restrained motion.
+  The motif is status lights; live data is the decoration.
+*/
+:root {
+  /* Surfaces — near-black, warmed slightly so it reads "rack room", not "void". */
+  --ink-900: #0a0b0d;
+  --ink-850: #0e1013;
+  --ink-800: #14171b;
+  --ink-700: #1c2026;
+  --ink-600: #2a2f37;
+  --line: #2a2f37;
+  --line-soft: #1d2127;
+
+  /* Type */
+  --fg: #e8eaed;
+  --fg-muted: #aab1bb;
+  --fg-dim: #6b7280;
+
+  /* Status lights */
+  --live: #3fb562;
+  --beta: #e0a53b;
+  --concept: #8b8fa3;
+  --dormant: #6b7280;
+  --retired: #4b5059;
+
+  /* Default accent (overridden per-project via --accent) */
+  --accent: #3fb562;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code', Menlo,
+    monospace;
+
+  --maxw: 72rem;
+}
+
+html {
+  background: var(--ink-900);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  font-weight: 600;
+}
+
+code,
+pre,
+.mono {
+  font-family: var(--font-mono);
+}
+
+.wrap {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* Eyebrow / section kicker */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+.case-study .legal-line {
+  color: var(--fg-dim);
+  font-size: 0.9rem;
+  padding-top: 1rem;
+}
+
+/* Case-study prose (MDX-rendered markdown inside .cs-body) */
+.case-study .cs-body p {
+  color: var(--fg-muted);
+  margin: 0 0 1rem;
+  max-width: 68ch;
+}
+.case-study .cs-body p:last-child {
+  margin-bottom: 0;
+}
+.case-study .cs-body strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+.case-study .cs-body em {
+  color: var(--fg);
+}
+.case-study .cs-body ul {
+  margin: 0 0 1rem;
+  padding-left: 1.1rem;
+  max-width: 68ch;
+}
+.case-study .cs-body li {
+  color: var(--fg-muted);
+  margin-bottom: 0.5rem;
+}
+.case-study .cs-body li::marker {
+  color: var(--accent);
+}
+.case-study .cs-body a {
+  color: var(--accent);
+  text-underline-offset: 2px;
+}
+.case-study .cs-body h3 {
+  font-size: 1.05rem;
+  margin: 1.5rem 0 0.6rem;
+  color: var(--fg);
+}
+.case-study .cs-body code {
+  font-size: 0.85em;
+  background: var(--ink-800);
+  border: 1px solid var(--line-soft);
+  border-radius: 0.25rem;
+  padding: 0.05rem 0.35rem;
+  color: var(--fg);
+}
+.case-study .cs-body blockquote {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 2px solid var(--accent);
+  background: var(--ink-850);
+  color: var(--fg-muted);
+  border-radius: 0 0.3rem 0.3rem 0;
+}
+.case-study .cs-body blockquote p {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

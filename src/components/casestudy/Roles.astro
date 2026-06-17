@@ -1,0 +1,33 @@
+---
+interface Props {
+  roles: string[];
+}
+const { roles } = Astro.props;
+---
+
+<ul class="roles">
+  {roles.map((r) => <li class="role mono">{r}</li>)}
+</ul>
+
+<style>
+  .roles {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0.5rem 0 0;
+  }
+  .role {
+    font-size: 0.78rem;
+    color: var(--fg);
+    border: 1px solid var(--line);
+    background: var(--ink-800);
+    border-radius: 0.3rem;
+    padding: 0.25rem 0.6rem;
+  }
+  .role::before {
+    content: '◆ ';
+    color: var(--accent);
+  }
+</style>
