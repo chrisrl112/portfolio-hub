@@ -8,22 +8,22 @@ import MetricDefs from '@components/casestudy/MetricDefs.astro';
 import Mermaid from '@components/casestudy/Mermaid.astro';
 
 <p class="legal-line">
-  <em>Legal context: operated for personal use, fully compliant with applicable state law.</em> That's the only line this page spends on it — the interesting part is the control system.
+  <em>Legal context: operated for personal use, fully compliant with applicable state law.</em> That's the only line this page spends on it; the rest is about the control system.
 </p>
 
 <Section n="02" title="The Pitch">
 
-**Problem.** A grow is a continuous control problem disguised as a hobby. Temperature and humidity drift every hour; a single bad night — a stuck fan, a missed watering, a heat spike while you're asleep — can set a cycle back weeks. Doing it well by hand means being on-call 24/7 for ~10 weeks straight. Nobody actually sustains that, which is why most home grows are a story of good intentions and one ruined harvest.
+**Problem.** A grow is a continuous control problem. Temperature and humidity drift every hour, and a single bad night (a stuck fan, a missed watering, a heat spike overnight) can set a cycle back weeks. Doing it well by hand means being on call 24/7 for about 10 weeks, which is hard to sustain.
 
-**System.** The climate control itself runs on a **VIVOSUN GrowHub controller** — a commercial grow controller that drives lights, fans, humidifier, and heater to setpoints. The interesting layer sits *on top* of it: a **Mac host** reads the room's telemetry, narrates it, and streams it. Today telemetry is pulled by running the VIVOSUN app in an Android emulator, screen-capturing it, and OCR'ing the readings every 30 minutes — a pipeline being retired in favor of a **direct pull from the VIVOSUN GrowHub cloud API** (see Challenges). On top of that telemetry layer sits an AI agronomist: Claude monitors temperature and humidity, writes a plain-language daily growth report against the photo log, and escalates anything off-band. The design principle is **graduated autonomy** — routine is handled silently, anomalies raise an alert, and anything that changes the *plan* waits for human sign-off before it touches the room.
+**System.** The climate control runs on a **VIVOSUN GrowHub controller**, a commercial grow controller that drives lights, fans, humidifier, and heater to setpoints. The layer on top of it is a **Mac host** that reads the room's telemetry, narrates it, and streams it. Today telemetry is pulled by running the VIVOSUN app in an Android emulator, screen-capturing it, and OCR'ing the readings every 30 minutes, a pipeline being retired in favor of a **direct pull from the VIVOSUN GrowHub cloud API** (see Challenges). On top of that telemetry layer sits an AI botanist: Claude monitors temperature and humidity, writes a plain-language daily growth report against the photo log, and escalates anything off-band. The design principle is **graduated autonomy**: routine is handled silently, anomalies raise an alert, and anything that changes the plan waits for human sign-off before it touches the room.
 
-**Payoff.** The grow runs whether or not I'm paying attention, and I find out about problems while they're still cheap to fix instead of at harvest. The room narrates itself: every day there's a report explaining what changed and why, and the whole thing streams live so the claim "this is a production system, not a demo" is verifiable in real time, not asserted in a paragraph.
+**Payoff.** The grow runs whether or not I'm paying attention, and I find out about problems while they're still cheap to fix instead of at harvest. Every day there's a report explaining what changed and why, and the whole thing streams live, so it can be checked in real time.
 
 </Section>
 
 <Section n="03" title="The Loops">
 
-The automation column is the point. Sensing, reporting, and anomaly detection run with no human in the loop. The one thing the system is *not* allowed to do on its own is change the plan — that gate is deliberate.
+Sensing, reporting, and anomaly detection run with no human in the loop. The one thing the system is not allowed to do on its own is change the plan; that gate is deliberate.
 
 <Loops loops={manifest.loops} />
 
@@ -36,10 +36,10 @@ Three named AI roles sit on top of a deterministic control layer:
 <Roles roles={manifest.ai_roles} />
 
 - **Monitor.** Watches the telemetry stream (temperature + humidity). Its job is cheap and constant: is every reading inside its target band? It holds no opinions; it establishes ground truth and hands anomalies up the chain.
-- **Anomaly-analyst.** Wakes only when the monitor flags an out-of-band reading. It reasons about *what kind* of problem this is — transient (a door left open) vs. structural (a failing fan) — and decides whether to alert. This is where judgment lives, so it gets the harder model call.
+- **Anomaly-analyst.** Wakes only when the monitor flags an out-of-band reading. It reasons about what kind of problem this is — transient (a door left open) vs. structural (a failing fan) — and decides whether to alert. This is where the judgment is, so it gets the harder model call.
 - **Daily-reporter.** Once per day, takes the photo log plus 24 hours of telemetry and writes the growth report that lands on the Twitch overlay and in the changelog.
 
-**Where the human gate sits.** The VIVOSUN controller's climate loop and all three AI roles run autonomously. The single human-approve gate is the **weekly plan revision**: the system can *recommend* a nutrient or environment change, but a human approves it before it's applied. Sensing and reporting are facts and ship freely; plan changes are decisions and wait for me.
+**Where the human gate sits.** The VIVOSUN controller's climate loop and all three AI roles run autonomously. The single human-approve gate is the **weekly plan revision**: the system can recommend a nutrient or environment change, but a human approves it before it's applied. Sensing and reporting ship freely; plan changes wait for a human.
 
 </Section>
 
@@ -51,10 +51,10 @@ Three named AI roles sit on top of a deterministic control layer:
 
 <Section n="06" title="Challenges & Lessons">
 
-- **Capture pipeline was the fragile part, not the grow.** The hardest reliability problems weren't agronomy — they were the boring plumbing: the dashboard server, the **VIVOSUN-app emulator + OCR** job that scrapes the readings, and the OBS scene feeding Twitch. The emulator path is the #1 source of silent failures. The fix in progress is to **retire the emulator + OCR entirely** and pull telemetry straight from the **VIVOSUN GrowHub cloud API over HTTPS** — which also kills the watchdog and the OBS-for-data contention. Lesson learned the expensive way: an "automated grow" is only as live as its flakiest capture job.
-- **Resisting the urge to let the AI drive.** The tempting design is "let Claude adjust nutrients automatically." I deliberately didn't. A wrong autonomous nutrient change is irreversible within a cycle, so the plan-revision gate stays human. Automate sensing and reporting fully; gate anything irreversible. That single distinction is most of what "human-in-the-loop" actually means in practice.
-- **Pull from the cloud, not the house.** Rather than expose the home network to let a hub poll the grow directly, telemetry comes from the **VIVOSUN cloud** — the Mac host pulls readings and the public site never has an inbound path to the house.
-- **What I'd redo.** Build the heartbeat emitter *first*, before the dashboard. Early on, "is it alive?" was answered by looking at the stream — fine until the stream itself was the thing that broke.
+- **The capture pipeline was the fragile part, not the grow.** The hardest reliability problems weren't about growing; they were the plumbing: the dashboard server, the **VIVOSUN-app emulator + OCR** job that scrapes the readings, and the OBS scene feeding Twitch. The emulator path is the top source of silent failures. The fix in progress is to **retire the emulator + OCR entirely** and pull telemetry straight from the **VIVOSUN GrowHub cloud API over HTTPS**, which also removes the watchdog and the OBS-for-data contention. An automated grow is only as live as its flakiest capture job.
+- **Not letting the AI drive.** The tempting design is to let Claude adjust nutrients automatically. I didn't. A wrong autonomous nutrient change is irreversible within a cycle, so the plan-revision gate stays human: automate sensing and reporting, gate anything irreversible.
+- **Pull from the cloud, not the house.** Rather than expose the home network to let a hub poll the grow directly, telemetry comes from the **VIVOSUN cloud**: the Mac host pulls readings, and the public site never has an inbound path to the house.
+- **What I'd redo.** Build the heartbeat emitter first, before the dashboard. Early on, "is it alive?" was answered by looking at the stream, which failed once the stream itself broke.
 
 </Section>
 
@@ -64,9 +64,9 @@ Three named AI roles sit on top of a deterministic control layer:
 
 **What you see:** a live Twitch embed of the room — plants under lights, the current cycle in progress — with a telemetry panel beside it reading the latest heartbeat metrics (days running, cycle day, current temperature + humidity, anomalies caught to date). The most recent AI daily report is shown as an overlay so a visitor can read, in plain language, what the room did today.
 
-**What you do:** mostly watch. The stream is the demo. When Twitch is offline, the panel degrades gracefully to the latest cycle **timelapse** rather than going dark — so the page is never a black box.
+**What you do:** mostly watch. When Twitch is offline, the panel falls back to the latest cycle **timelapse** rather than going dark, so the page is never blank.
 
-*Opsec note baked into the build: no street-level or location-identifying detail appears in the stream, overlay, or copy.*
+*Opsec note: no street-level or location-identifying detail appears in the stream, overlay, or copy.*
 
 </Section>
 
@@ -75,7 +75,7 @@ Three named AI roles sit on top of a deterministic control layer:
 **Recent activity** *(newest first — final entries come from `CHANGELOG.md`)*
 
 - **2026-06-13** — Daily grow-check + live Twitch dashboard running; dual-cam capture in progress.
-- **2026-06** — Dashboard server migrating to new Mac host; old-Mac emulator + OCR jobs being retired (reliability win).
+- **2026-06** — Dashboard server migrating to new Mac host; old-Mac emulator + OCR jobs being retired.
 - **2025-11** — Grow operation brought online; first automated cycle begins.
 
 **Metrics this page surfaces**

@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "slug": "claude-investment-portfolio",
   "name": "Claude Investment Portfolio",
-  "tagline": "A one-person fund with a full AI investment committee.",
+  "tagline": "A multi-agent AI committee for personal investment research.",
   "status": "beta",
   "maturity": 3,
   "started": "2025-10",

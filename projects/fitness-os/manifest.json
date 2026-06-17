@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "slug": "fitness-os",
   "name": "Fitness OS",
-  "tagline": "Watch a system get built — a training operating system, in the open.",
+  "tagline": "A training system built from logged workouts and nutrition.",
   "status": "beta",
   "maturity": 2,
   "started": "2026-05",
