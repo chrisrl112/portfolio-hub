@@ -1,0 +1,137 @@
+---
+slug: fitness-os
+name: Fitness OS
+tagline: Watch a system get built — a training operating system, in the open.
+status: beta
+maturity: 2
+started: "2026-05"
+stack:
+  - Claude API
+  - Apple Health / Whoop export ingest
+  - programming loop
+  - Supabase (heartbeat)
+ai_roles:
+  - ingest
+  - programmer
+  - reviewer
+accent: signal-blue
+---
+
+# Fitness OS
+
+> **Status:** `BETA` · Maturity **2 / 5**
+> **Watch a system get built — a training operating system, in the open.**
+
+| Metric | Value |
+|---|---|
+| Adherence (this block) | `{{adherence_pct}}`% |
+| Weeks programmed by the loop | `{{weeks_programmed}}` |
+| Current phase | `{{phase_label}}` *(e.g. week 3 of a 12-week cut)* |
+
+**▶ Watch it get built** — this page is the demo. The roadmap and changelog *are* the product right now.
+
+---
+
+## The Pitch
+
+**Problem.** Most of my systems show up here finished. This one doesn't — and that's the point. Training is a domain where I have real data flowing (workouts, body metrics, sleep) but no system tying it together yet. The honest move isn't to fake a polished case study; it's to put the half-built thing on the wall and let the changelog do the talking. Every other portfolio shows you the highlight reel. This page shows you the work in progress.
+
+**System.** The blueprint is a standardization loop, built in stages: **ingest** the raw signals (workouts, body metrics, sleep — from Apple Health / Whoop export), a **weekly programming loop** where the AI drafts next week's training from last week's *actuals* and a human approves it, a **monthly performance-review memo**, and a **quarterly program redesign**. Today only the early pieces exist; the rest is roadmap. The maturity score says 2 and means it — that's not an apology, it's the spec.
+
+**Payoff.** Two things. First, the practical one: a training system that programs itself from what I actually did, not what some generic plan assumed. Second, the meta one — this is what "build in public" looks like done honestly. A portfolio that shows a `2/5` getting built, with visible velocity in the changelog, is more credible than one where everything is suspiciously finished. Immaturity, labeled and moving, becomes a reason to come back and check on it.
+
+---
+
+## The Loops
+
+| Cadence | What happens | Automation |
+|---|---|---|
+| Continuous | Ingest — workouts, body metrics, sleep from Apple Health / Whoop export *(v1 loop being defined)* | **full** *(planned)* |
+| Weekly | Programming loop — AI drafts next week from last week's actuals | **human-approve** |
+| Weekly | Weigh-in + calorie adjustment vs the 12-week glide path | **human-approve** |
+| Monthly | Performance-review memo — trends, adherence, what to change | **full** (draft), **human-approve** (act) |
+| Quarterly | Program redesign | **human-approve** |
+
+*Honest labeling: the weekly weigh-in / macro-adjustment cadence is **established and running today**; the automated ingest and programming loops are **defined but not yet built** — flagged `(planned)` above rather than dressed up as live.*
+
+---
+
+## AI Architecture
+
+Three named roles, most of which are still on the roadmap — stated as the design, not a claim of current state:
+
+- **Ingest.** Normalizes the raw exports (Apple Health / Whoop) into a clean weekly picture of actuals — what got trained, recovery, sleep, bodyweight trend. The foundation everything else reads from. *(v1 in definition.)*
+- **Programmer.** The weekly draft engine: takes last week's actuals and proposes next week's training and macro targets. Deliberately a *draft* — it never auto-applies.
+- **Reviewer.** Writes the monthly performance-review memo from the trend data and flags what to change heading into the next block.
+
+**Where the human gate sits.** This is a heavily human-gated system by design, which fits a domain where the cost of a bad automated call is real fatigue or injury. Ingest and the memo draft can run automatically; **every programming and nutrition change is human-approve.** The AI proposes the week; the human accepts it. That's the right posture for a training system and it's stated up front rather than discovered later.
+
+*Data posture (R7): this page surfaces **trends and adherence %**, never raw body data. No weights, no measurements, no raw health numbers — just whether the system is being followed and which direction the trend points.*
+
+---
+
+## The Flowchart
+
+```mermaid
+flowchart TD
+  EXPORT["Apple Health / Whoop<br/>export"] --> INGEST["Ingest<br/>(normalize actuals)"]
+  INGEST --> ACTUALS[("Last week's actuals")]
+  ACTUALS --> PROG["Programmer<br/>drafts next week"]
+  PROG --> GATE{"Human<br/>approve?"}
+  GATE -->|approved| WEEK["Next week's<br/>training + macros"]
+  GATE -->|adjust| PROG
+  WEEK --> TRAIN["Train + log"]
+  TRAIN --> EXPORT
+  ACTUALS --> MEMO["Reviewer<br/>monthly memo"]
+  MEMO --> QTR["Quarterly redesign"]
+  QTR -.->|resets| PROG
+  TRAIN --> METRICS["Adherence % · trends"]
+  METRICS --> HEART[("Heartbeat")]
+```
+
+---
+
+## Challenges & Lessons
+
+- **Publishing it at a `2/5` is the harder choice, and the right one.** The instinct is to wait until it's impressive. But a portfolio whose only failure mode is "everything's finished" reads as a highlight reel, and senior readers discount highlight reels. Shipping a labeled, honestly-immature system — with the changelog as the proof of motion — is a credibility play, not a confession. The lesson generalizes: visible velocity on an unfinished system beats a static finished-looking one.
+- **Start the loop deliberately small.** The temptation with fitness data is to ingest *everything* (sleep stages, HRV, every macro) and build the grand programmer on day one. That's how this kind of project dies — too much surface, never ships. The v1 loop is being defined as the *smallest* thing that closes: ingest actuals → draft a week → approve. Earn complexity later.
+- **Privacy is a design constraint, not an afterthought.** Health data is the most sensitive thing any of my systems touch. The decision to surface only **trends and adherence %** — never raw body metrics — is baked into the architecture from the start (R7), not bolted on before launch. Deciding that early shapes what the heartbeat is even allowed to carry.
+- **What I'd redo.** Nothing yet — that's the honest answer for a system this early, and saying so is more credible than inventing a war story. The "what I'd redo" will fill in as the loops actually run. *(Revisit this section after the first month of real cycles.)*
+
+---
+
+## Live
+
+**What you see** *(v1)*: a short **60–90s screen-capture video** walking through the system as it stands, plus a simple **metrics panel** showing **adherence % and trend direction** — explicitly not raw numbers. The panel is intentionally sparse; it grows as the loops come online, and that growth is itself the thing worth watching.
+
+**What you do:** check back. The live surface here is *progress* — the changelog and roadmap below are the real demo. As the ingest and programming loops ship, this section graduates from video to a live metrics panel. Watching that ladder is the entire pitch of this page.
+
+*(Video stands in until a live surface exists — per the demo ladder, this project is at the "video" rung and climbing one rung per quarter.)*
+
+---
+
+## Changelog & Metrics
+
+**Recent activity** *(newest first — stub, grounded in current status; final entries come from `CHANGELOG.md`)*
+
+- **2026-06-13** — Cut underway (~week 3 of 12); weekly meal-optimization cadence established.
+- **2026-06** — Week-4 cut meal plan + macro refresh; weekly weigh-in vs the 12-week glide path running.
+- **2026-06** — Fitness OS capsule scoped for the Portfolio Hub (low readiness = the content angle).
+- **2026-05** — Project opened; v1 ingest loop being defined.
+
+**Metrics this page surfaces** *(definitions — trends/adherence only, per R7)*
+
+- `adherence_pct` — % of planned sessions / nutrition targets actually hit this block. Source: heartbeat.
+- `weeks_programmed` — count of weeks the programming loop has drafted (proof of motion). Source: heartbeat.
+- `phase_label` — current training/nutrition phase, e.g. "week 3 of 12-week cut". Source: heartbeat.
+- *(No raw body data is ever surfaced — R7.)*
+
+---
+
+## Roadmap
+
+- **Define the v1 ingest loop** — the smallest closed loop: normalize Apple Health / Whoop actuals into a weekly picture. *(Deliberately small — first real milestone.)*
+- **Weekly programming loop** — AI drafts next week from last week's actuals; human approves.
+- **Monthly performance-review memo** — auto-drafted trends + recommendations.
+- **Quarterly program redesign** — the long-horizon reset.
+- **Meal-Prep Loop** — Sunday: macro targets + preferences → menu, grocery list, cook plan. (High life-value; a natural Fitness OS milestone.)

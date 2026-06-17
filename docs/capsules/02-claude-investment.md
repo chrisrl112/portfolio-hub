@@ -1,0 +1,152 @@
+---
+slug: claude-investment-portfolio
+name: Claude Investment Portfolio
+tagline: A one-person fund with a full AI investment committee.
+status: beta
+maturity: 3
+started: "2025-10"
+stack:
+  - Claude (multi-agent, staged sessions)
+  - staged research pipeline (Scout → Red Team → Committee → Monitoring)
+  - markdown holdings ledger (Holdings_Master.md)
+  - Supabase (heartbeat) [planned]
+ai_roles:
+  - researcher
+  - red-team
+  - committee-chair
+  - bull
+  - bear
+  - monitor
+accent: ledger-amber
+accent_hex: "#E0A53B"   # anchor (500 step) — source: BRAND-ARCHITECTURE-v1.md §5 (draft, ph-14)
+---
+
+# Claude Investment Portfolio
+
+> **Status:** `BETA` · Maturity **3 / 5**
+> **A one-person fund with a full AI investment committee.**
+
+| Metric | Value |
+|---|---|
+| Committee cycles run | `{{committee_cycles}}` |
+| Research reports generated | `{{reports_generated}}` |
+| Last committee date | `{{last_committee_date}}` |
+
+**▶ Read the committee's last debate** — bull, bear, and chair, lightly redacted, arguing a real position.
+
+> **This is a personal research system, not investment advice.** Nothing here is a recommendation — it's a record of one person's process and book. The page runs **full transparency**: it shows the actual holdings — positions and dollar amounts — *alongside* the reasoning that put them there, so the discipline is verifiable rather than asserted. The only things held back are genuinely sensitive details (account identifiers and the like) and a redaction pass on every transcript. *[confirm: live positions/$ table + redaction pass — final human glance before this page goes public; gated on single-capital-ledger consolidation completing.]*
+
+---
+
+## The Pitch
+
+**Problem.** Investing well as an individual means doing the work an institution distributes across a desk of people: generating ideas, researching them honestly, arguing the bear case as hard as the bull case, and then *not* falling in love with your own thesis. Solo, the failure mode is predictable — you research what you already want to buy, skip the disconfirming work, and discover the risks after they cost you. The missing ingredient isn't data. It's an adversary.
+
+**System.** This is that desk, built as a **staged multi-agent pipeline** — a sequence of Claude sessions, each a prompt-doc that runs one stage and hands its artifact to the next. A theme enters intake; parallel research agents work it up; a **red-team agent** is explicitly tasked with attacking the thesis; then a committee — bull, bear, and a chair who synthesizes — debates it and produces a structured verdict. A structurer translates verdicts into portfolio shape, and a monitor sweep watches positions and re-raises anything that drifts from the thesis that justified it. The holdings live in a markdown ledger (`Holdings_Master.md`). Every stage produces an artifact, so the *reasoning* is auditable, not just the outcome.
+
+**Payoff.** Decisions come with their own paper trail: the bull case, the bear case, the red-team's objections, and the chair's call — all written down. The point isn't that the AI is right; it's that the *process* is disciplined and inspectable. That discipline is the product. And the debates themselves turn out to be the most readable thing the system makes — people will genuinely sit and read AI arguing with itself.
+
+---
+
+## The Loops
+
+| Cadence | What happens | Automation |
+|---|---|---|
+| Per theme | Intake → parallel research agents work up the thesis | **AI-run, human-initiated** |
+| Per theme | Red-team review — adversary attacks the thesis on purpose | **AI-run, human-initiated** |
+| Per theme | Committee debate (bull / bear / chair) → structured verdict | **AI-run, human-initiated** |
+| Cadence | Full cycle: new themes + monitor sweep of existing positions | **staged sessions** (human gate on action) |
+| On verdict | Portfolio structuring / position changes | **human-approve** |
+| Per cycle | Monitor sweep — flag drift from thesis, re-raise to committee | **AI-run, human-initiated** |
+
+These are **staged Claude sessions**, not an always-on autonomous service — each stage (Scout, Red Team, Committee, Monitoring) is a prompt-doc Chris kicks off on a cadence, and the output of one stage feeds the next. The AI does the reasoning; a human starts the run and, critically, takes the position. Every change to actual structure passes through a human-approve gate.
+
+---
+
+## AI Architecture
+
+A staged, multi-agent pipeline with named roles:
+
+- **Researcher(s).** Run in parallel on an intake theme — the breadth pass. Each produces a written work-up rather than a score, so downstream agents argue over substance.
+- **Red-team.** The keystone role. Explicitly adversarial: its job is to *break* the thesis — find the disconfirming evidence, the crowded-trade risk, the reason this is already priced in. Separating "research it" from "attack it" into two roles is what stops the system from confirming its own bias.
+- **Committee — bull, bear, chair.** The bull and bear take the two sides; the **committee-chair** synthesizes the debate into a verdict with explicit reasoning. The transcript of this debate is the flagship public artifact (see Live).
+- **Structurer.** Translates an approved verdict into portfolio shape — sizing, role in the book — and hands the actionable change to the human gate.
+- **Monitor.** Runs as a monitoring stage against held positions; when something drifts from the thesis that justified it, the monitor re-raises it to the committee rather than letting it sit.
+
+**Where the human gate sits.** Research, red-teaming, debate, and monitoring all run as **AI-driven stages a human kicks off** — they generate *judgment inputs*, not actions. The human-approve gate sits at **structuring/action**: no position is opened, sized, or changed without a human signing off. This is the project's whole governance thesis — agents deliberate; humans allocate.
+
+*Operational candor: the system is currently in active audit remediation — see Challenges.*
+
+---
+
+## The Flowchart
+
+```mermaid
+flowchart TD
+  THEME["Theme intake"] --> R["Research agents<br/>(parallel)"]
+  R --> RED["Red-team review<br/>(adversarial)"]
+  RED --> COMM["Committee<br/>bull · bear · chair"]
+  COMM --> VERDICT{"Verdict"}
+  VERDICT -->|advance| STRUCT["Structurer<br/>sizing & role"]
+  VERDICT -->|kill| ARCHIVE["Archive thesis"]
+  STRUCT --> GATE{"Human<br/>approve?"}
+  GATE -->|approved| BOOK["Portfolio"]
+  GATE -->|rejected| ARCHIVE
+  BOOK --> MON["Monitor loop"]
+  MON -->|drift detected| COMM
+  WEEK["Weekly cycle"] -.->|kicks off| THEME
+  WEEK -.->|sweeps| MON
+```
+
+---
+
+## Challenges & Lessons
+
+- **The system needed governance before it needed more agents.** A multi-agent pipeline generates a lot of confident output fast, and confident output without an audit trail is a liability, not an asset. A full **system audit** surfaced blockers that are being actively remediated — closing audit findings, consolidating to a **single capital ledger** (one source of truth for what's actually held), and writing an explicit **override protocol** with SLAs for when a human overrules the committee. The lesson: the impressive part of a multi-agent system is the orchestration; the *trustworthy* part is the ledger and the override log behind it.
+- **Pre-writing branches beats reacting.** Around scheduled catalysts (e.g. an FOMC decision), the system pre-writes **dovish / hawkish / hike branches** *before* the event rather than scrambling to react after. Pre-committing the reasoning removes the worst bias — interpreting the news to fit the position you already hold.
+- **Decisions need a standard, not a vibe.** Individual calls (an override on one name, a definition ruling on another) were being made case-by-case. The fix in progress is a **decision-brief standard** and a **benchmark scoreboard** (equity 60/40, crypto on full basis) so the system is graded against something honest instead of grading itself.
+- **What I'd redo.** Stand up the benchmark scoreboard and the single ledger on day one. Without them, "the committee did well" is an opinion. With them, it's a number — and since this page shows the actual book, positions and dollars and all, the credibility rests on being able to prove the process behind those numbers was disciplined, not just active. Full disclosure raises the bar; the ledger and the override log are what clear it.
+
+---
+
+## Live
+
+**What you see** *(full disclosure — the actual book and the reasoning behind it)*:
+
+1. **The live book** *(positions + dollar amounts)* — the actual holdings, what's held and at what size, pulled from the holdings ledger. Each line traces back to the committee verdict that justified it, so a reader can go from "what's owned" to "why it's owned" in one click. `[metric: positions & $ — pull from Holdings_Master.md]` · `[metric: returns vs benchmark — pull from the scoreboard once it's live]` · *[confirm: live positions/$ table + redaction pass — final human glance before this page goes public; gated on single-capital-ledger consolidation completing.]*
+2. **A process dashboard** *(planned — pending the pipeline heartbeat)* — current cycle stage, count of research reports generated, number of committee cycles run, and the last committee date. Once the heartbeat emitter exists, it shows the machine is *running* alongside what it holds; until then these are populated by hand from the stage artifacts.
+3. **The Committee Transcript Gallery** *(flagship content)* — a browsable gallery of lightly-redacted bull / bear / chair debates on real themes. Each transcript renders the full argument: the bull's case, the bear's rebuttal, the red-team's objections, and the chair's verdict. This is the single most shareable artifact on the site, and it's a byproduct the system already produces — near-zero marginal cost to publish.
+
+**What you do:** read. Pick a position and trace it back to the debate that bought it, or pick a debate and watch the AI committee argue a real call to a reasoned verdict. You see both *how it decides* **and** *what it owns* — the book and the reasoning side by side.
+
+*Disclosure guardrails: full positions, dollar amounts, and returns are shown; the only things withheld are genuinely sensitive details (account identifiers and the like) and anything a per-transcript redaction pass flags. The "personal research system, not investment advice" disclaimer rides at the top of the page.*
+
+---
+
+## Changelog & Metrics
+
+**Recent activity** *(newest first — stub, grounded in current status; final entries come from `CHANGELOG.md`)*
+
+- **2026-06** — FOMC branch plan in progress: pre-writing dovish / hawkish / hike branches ahead of the Jun 16 decision.
+- **2026-06-09** — System audit complete (`09_System_Audit`); implementation/remediation plan written.
+- **2026-06** — Audit remediation underway: closing 5 blockers, consolidating to a single capital ledger, drafting override protocol + decision-brief standard with SLAs.
+- **2025-10** — Pipeline online; first committee cycles run.
+
+**Metrics this page surfaces** *(definitions)*
+
+- `committee_cycles` — number of full bull/bear/chair debates the committee has completed. Source: heartbeat.
+- `reports_generated` — research work-ups produced by the research agents. Source: heartbeat.
+- `last_committee_date` — date of the most recent committee debate (powers staleness honesty). Source: heartbeat.
+- **Positions & dollar amounts** — the live book, shown in full. `[metric: positions & $ — pull from Holdings_Master.md]`. Source: holdings ledger (`Projects/Investment System Health/01_Portfolio_Snapshot/Holdings_Master.md`), wired at publish time — *not hand-keyed here.*
+- **Returns vs benchmark** — surfaced once the benchmark scoreboard is live (equity 60/40, crypto on full basis). `[metric: returns vs benchmark — pull from the scoreboard]`.
+
+---
+
+## Roadmap
+
+- **Committee Transcript Gallery, public** — redaction pass + transcript renderer. The flagship artifact; highest demo-value-per-hour on the whole portfolio.
+- **Close audit remediation** — finish the 5 blockers and stand up the single capital ledger before any live metric is published.
+- **Publish the live book** — wire the positions + dollar-amounts table from `Holdings_Master.md` and run the final redaction pass. Gated on the single-capital-ledger consolidation above — the full-disclosure page can't go public until there's one trustworthy source for what's actually held.
+- **Benchmark scoreboard** — grade the system against equity 60/40 and a crypto-on-full-basis baseline, so "process worked" is measurable.
+- **Override protocol + decision-brief standard** — formal SLAs for human overrides, logged as part of the audit trail.
+- **Heartbeat from pipeline runs** — lights up the live process dashboard and the homepage status badge.

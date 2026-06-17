@@ -1,0 +1,148 @@
+---
+slug: claude-investment-portfolio
+name: Claude Investment Portfolio
+tagline: A one-person fund with a full AI investment committee.
+status: beta
+maturity: 3
+started: "2025-10"
+stack:
+  - Claude API (multi-agent)
+  - research pipeline
+  - structured ledger
+  - Supabase (heartbeat)
+ai_roles:
+  - researcher
+  - red-team
+  - committee-chair
+  - bull
+  - bear
+  - monitor
+accent: ledger-amber
+---
+
+# Claude Investment Portfolio
+
+> **Status:** `BETA` · Maturity **3 / 5**
+> **A one-person fund with a full AI investment committee.**
+
+| Metric | Value |
+|---|---|
+| Committee cycles run | `{{committee_cycles}}` |
+| Research reports generated | `{{reports_generated}}` |
+| Last committee date | `{{last_committee_date}}` |
+
+**▶ Read the committee's last debate** — bull, bear, and chair, lightly redacted, arguing a real position.
+
+> **This is a personal research system, not investment advice.** Nothing here is a recommendation. The page shows *process* — how the pipeline thinks — not positions. *[Chris to confirm disclosure level — D6. Default applied here: process only; no returns, no dollar amounts, no positions. If returns are ever shown, % only.]*
+
+---
+
+## The Pitch
+
+**Problem.** Investing well as an individual means doing the work an institution distributes across a desk of people: generating ideas, researching them honestly, arguing the bear case as hard as the bull case, and then *not* falling in love with your own thesis. Solo, the failure mode is predictable — you research what you already want to buy, skip the disconfirming work, and discover the risks after they cost you. The missing ingredient isn't data. It's an adversary.
+
+**System.** This is that desk, built as a multi-agent pipeline. A theme enters intake; parallel research agents work it up; a **red-team agent** is explicitly tasked with attacking the thesis; then a committee — bull, bear, and a chair who synthesizes — debates it and produces a structured verdict. A structurer translates verdicts into portfolio shape, and a monitor loop watches positions and re-raises anything that drifts from the thesis that justified it. Every stage produces an artifact, so the *reasoning* is auditable, not just the outcome.
+
+**Payoff.** Decisions come with their own paper trail: the bull case, the bear case, the red-team's objections, and the chair's call — all written down. The point isn't that the AI is right; it's that the *process* is disciplined and inspectable. That discipline is the product. And the debates themselves turn out to be the most readable thing the system makes — people will genuinely sit and read AI arguing with itself.
+
+---
+
+## The Loops
+
+| Cadence | What happens | Automation |
+|---|---|---|
+| Per theme | Intake → parallel research agents work up the thesis | **full** |
+| Per theme | Red-team review — adversary attacks the thesis on purpose | **full** |
+| Per theme | Committee debate (bull / bear / chair) → structured verdict | **full** |
+| Weekly | Full cycle: new themes + monitor sweep of existing positions | **full** (with human gate on action) |
+| On verdict | Portfolio structuring / position changes | **human-approve** |
+| Continuous | Monitor loop — flag drift from thesis, re-raise to committee | **full** (alerts), **human-approve** (act) |
+
+The committee can deliberate all day on its own. What it cannot do is *act* — every change to actual structure passes through a human-approve gate. The AI builds the case; the human takes the position.
+
+---
+
+## AI Architecture
+
+A staged, multi-agent pipeline with named roles:
+
+- **Researcher(s).** Run in parallel on an intake theme — the breadth pass. Each produces a written work-up rather than a score, so downstream agents argue over substance.
+- **Red-team.** The keystone role. Explicitly adversarial: its job is to *break* the thesis — find the disconfirming evidence, the crowded-trade risk, the reason this is already priced in. Separating "research it" from "attack it" into two roles is what stops the system from confirming its own bias.
+- **Committee — bull, bear, chair.** The bull and bear take the two sides; the **committee-chair** synthesizes the debate into a verdict with explicit reasoning. The transcript of this debate is the flagship public artifact (see Live).
+- **Structurer.** Translates an approved verdict into portfolio shape — sizing, role in the book — and hands the actionable change to the human gate.
+- **Monitor.** Runs continuously against held positions; when something drifts from the thesis that justified it, the monitor re-raises it to the committee rather than letting it sit.
+
+**Where the human gate sits.** Research, red-teaming, debate, and monitoring all run autonomously — they generate *judgment inputs*. The human-approve gate sits at **structuring/action**: no position is opened, sized, or changed without a human signing off. This is the project's whole governance thesis — agents deliberate; humans allocate.
+
+*Operational candor: the system is currently in active audit remediation — see Challenges.*
+
+---
+
+## The Flowchart
+
+```mermaid
+flowchart TD
+  THEME["Theme intake"] --> R["Research agents<br/>(parallel)"]
+  R --> RED["Red-team review<br/>(adversarial)"]
+  RED --> COMM["Committee<br/>bull · bear · chair"]
+  COMM --> VERDICT{"Verdict"}
+  VERDICT -->|advance| STRUCT["Structurer<br/>sizing & role"]
+  VERDICT -->|kill| ARCHIVE["Archive thesis"]
+  STRUCT --> GATE{"Human<br/>approve?"}
+  GATE -->|approved| BOOK["Portfolio"]
+  GATE -->|rejected| ARCHIVE
+  BOOK --> MON["Monitor loop"]
+  MON -->|drift detected| COMM
+  WEEK["Weekly cycle"] -.->|kicks off| THEME
+  WEEK -.->|sweeps| MON
+```
+
+---
+
+## Challenges & Lessons
+
+- **The system needed governance before it needed more agents.** A multi-agent pipeline generates a lot of confident output fast, and confident output without an audit trail is a liability, not an asset. A full **system audit** surfaced blockers that are being actively remediated — closing audit findings, consolidating to a **single capital ledger** (one source of truth for what's actually held), and writing an explicit **override protocol** with SLAs for when a human overrules the committee. The lesson: the impressive part of a multi-agent system is the orchestration; the *trustworthy* part is the ledger and the override log behind it.
+- **Pre-writing branches beats reacting.** Around scheduled catalysts (e.g. an FOMC decision), the system pre-writes **dovish / hawkish / hike branches** *before* the event rather than scrambling to react after. Pre-committing the reasoning removes the worst bias — interpreting the news to fit the position you already hold.
+- **Decisions need a standard, not a vibe.** Individual calls (an override on one name, a definition ruling on another) were being made case-by-case. The fix in progress is a **decision-brief standard** and a **benchmark scoreboard** (equity 60/40, crypto on full basis) so the system is graded against something honest instead of grading itself.
+- **What I'd redo.** Stand up the benchmark scoreboard and the single ledger on day one. Without them, "the committee did well" is an opinion. With them, it's a number — and the whole credibility of a process-over-positions story rests on being able to show the process was disciplined, not just active.
+
+---
+
+## Live
+
+**What you see** *(watch-only — no positions, no dollar amounts, ever)*:
+
+1. **A process dashboard** — current cycle stage, count of research reports generated, number of committee cycles run, and the last committee date, pulled from the pipeline heartbeat. It shows the machine is *running*, not what it holds.
+2. **The Committee Transcript Gallery** *(flagship content)* — a browsable gallery of lightly-redacted bull / bear / chair debates on real themes. Each transcript renders the full argument: the bull's case, the bear's rebuttal, the red-team's objections, and the chair's verdict. This is the single most shareable artifact on the site, and it's a byproduct the system already produces — near-zero marginal cost to publish.
+
+**What you do:** read. Pick a debate, watch the AI committee argue a real call to a reasoned verdict. You see *how it decides*, never *what it owns*.
+
+*Disclosure guardrails: redaction pass on every transcript before publish; the disclaimer rides at the top of the page; returns shown only as % if at all. **[Chris to confirm disclosure level — D6.]***
+
+---
+
+## Changelog & Metrics
+
+**Recent activity** *(newest first — stub, grounded in current status; final entries come from `CHANGELOG.md`)*
+
+- **2026-06** — FOMC branch plan in progress: pre-writing dovish / hawkish / hike branches ahead of the Jun 16 decision.
+- **2026-06-09** — System audit complete (`09_System_Audit`); implementation/remediation plan written.
+- **2026-06** — Audit remediation underway: closing 5 blockers, consolidating to a single capital ledger, drafting override protocol + decision-brief standard with SLAs.
+- **2025-10** — Pipeline online; first committee cycles run.
+
+**Metrics this page surfaces** *(definitions)*
+
+- `committee_cycles` — number of full bull/bear/chair debates the committee has completed. Source: heartbeat.
+- `reports_generated` — research work-ups produced by the research agents. Source: heartbeat.
+- `last_committee_date` — date of the most recent committee debate (powers staleness honesty). Source: heartbeat.
+- *(Returns deliberately not surfaced by default — **[Chris to confirm disclosure level — D6]**.)*
+
+---
+
+## Roadmap
+
+- **Committee Transcript Gallery, public** — redaction pass + transcript renderer. The flagship artifact; highest demo-value-per-hour on the whole portfolio.
+- **Close audit remediation** — finish the 5 blockers and stand up the single capital ledger before any live metric is published.
+- **Benchmark scoreboard** — grade the system against equity 60/40 and a crypto-on-full-basis baseline, so "process worked" is measurable.
+- **Override protocol + decision-brief standard** — formal SLAs for human overrides, logged as part of the audit trail.
+- **Heartbeat from pipeline runs** — lights up the live process dashboard and the homepage status badge.
