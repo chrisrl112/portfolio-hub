@@ -1,0 +1,32 @@
+---
+/**
+ * Horizontal lockup (ph-35): compounding mark + "Compound Interests" wordmark
+ * in Space Grotesk 600. Mark height ≈ cap height of the wordmark.
+ */
+import CompoundingMark from './CompoundingMark.astro';
+
+interface Props {
+  markSize?: number;
+}
+const { markSize = 20 } = Astro.props;
+---
+
+<span class="lockup">
+  <CompoundingMark size={markSize} title="Compound Interests" />
+  <span class="wordmark">Compound Interests</span>
+</span>
+
+<style>
+  .lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+    color: var(--paper-100);
+  }
+</style>

@@ -7,6 +7,8 @@ import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
+import Wordmark from '@components/brand/Wordmark.astro';
+import EndorsementLockup from '@components/brand/EndorsementLockup.astro';
 
 interface Props {
   title: string;
@@ -41,8 +43,7 @@ const fullTitle =
     <header class="site-header">
       <div class="wrap header-inner">
         <a href="/" class="brand">
-          <span class="brand-dot" aria-hidden="true"></span>
-          <span class="brand-name">Compound Interests</span>
+          <Wordmark />
         </a>
         <nav class="site-nav">
           <a href="/#systems">Systems</a>
@@ -58,7 +59,7 @@ const fullTitle =
 
     <footer class="site-footer">
       <div class="wrap footer-inner">
-        <span class="footer-mark">Compound Interests</span>
+        <EndorsementLockup />
         <span class="footer-tag">Systems that compound.</span>
       </div>
     </footer>

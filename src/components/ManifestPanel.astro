@@ -1,0 +1,67 @@
+---
+/**
+ * Manifest panel (ph-35): ink-900 card, mono key/value rows, fixed field order
+ * slug · status · started · stack · ai_roles. Keys slate-500, values paper-100,
+ * status value in ci-bone (DS §4).
+ */
+import type { Manifest } from '@lib/manifests';
+
+interface Props {
+  manifest: Manifest;
+}
+const { manifest } = Astro.props;
+
+const rows: { key: string; value: string }[] = [
+  { key: 'slug', value: manifest.slug },
+  { key: 'status', value: manifest.status },
+  { key: 'started', value: manifest.started },
+  { key: 'stack', value: manifest.stack.join(' · ') },
+  { key: 'ai_roles', value: manifest.ai_roles.join(' · ') },
+];
+---
+
+<dl class="manifest-panel">
+  {
+    rows.map((r) => (
+      <div class="row">
+        <dt class="k">{r.key}</dt>
+        <dd class:list={['v', { 'v-status': r.key === 'status' }]}>{r.value}</dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .manifest-panel {
+    margin: 0;
+    background: var(--ink-900);
+    border: 1px solid var(--ink-800);
+    border-radius: var(--radius-card);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: 1rem;
+    padding: 9px 24px;
+    border-top: 1px solid var(--ink-800);
+  }
+  .row:first-child {
+    border-top: none;
+  }
+  .k {
+    margin: 0;
+    color: var(--slate-500);
+  }
+  .v {
+    margin: 0;
+    color: var(--paper-100);
+    overflow-wrap: anywhere;
+  }
+  .v-status {
+    color: var(--ci-bone);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+</style>

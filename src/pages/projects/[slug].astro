@@ -2,6 +2,7 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import StatusBadge from '@components/StatusBadge.astro';
 import MetricStat from '@components/MetricStat.astro';
+import ManifestPanel from '@components/ManifestPanel.astro';
 import { computeStaleNote, getProjects, type Manifest } from '@lib/manifests';
 // MaturityMeter now renders inside StatusBadge (the keystone pill, ph-34).
 
@@ -64,9 +65,7 @@ const started = new Date(`${project.started}-01T00:00:00`).toLocaleDateString(
 
       <a class="cta" href="#live">{ctaVerb} →</a>
 
-      <ul class="stack mono" aria-label="Stack">
-        {project.stack.map((s) => <li>{s}</li>)}
-      </ul>
+      <ManifestPanel manifest={project} />
     </header>
 
     <div class="wrap body">
