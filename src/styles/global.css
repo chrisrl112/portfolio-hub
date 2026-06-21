@@ -6,58 +6,82 @@
   The motif is status lights; live data is the decoration.
 */
 :root {
-  /* Surfaces — near-black, warmed slightly so it reads "rack room", not "void". */
-  --ink-900: #0a0b0d;
-  --ink-850: #0e1013;
-  --ink-800: #14171b;
-  --ink-700: #1c2026;
-  --ink-600: #2a2f37;
-  --line: #2a2f37;
-  --line-soft: #1d2127;
+  /* ===========================================================================
+   * Compound Interests — Parent Design System v1 (LOCKED) · ph-33
+   * Source of truth: brand/design-system-v1/{README.md, tokens.css}.
+   * Direction: Editorial. Parent accent = ci-bone #E6E1D5 — the ONLY signal
+   * color on a parent page. ci-pulse is the deferred alternate (defined, unused).
+   *
+   * Reconciled over ph-15: the shared neutral NAMES now carry the locked DS
+   * values, and the repo's alias tokens (--fg*, --line*, --ink-850/600) are
+   * RE-POINTED at DS tokens so the whole site adopts the palette with no
+   * parallel style system and no component edits. Status-light hexes
+   * (--live/--beta/...) are intentionally left as-is for ph-34's badge restyle;
+   * ci-bone is wired as the parent --accent here.
+   * ========================================================================= */
 
-  /* Type */
-  --fg: #e8eaed;
-  --fg-muted: #aab1bb;
-  --fg-dim: #6b7280;
+  /* Neutrals — locked DS scale (README §Color) */
+  --ink-950: #0b0c0e; /* page background (near-black, warm cast) */
+  --ink-900: #141619; /* cards / panels */
+  --ink-800: #1e2125; /* borders, hairlines, grid rules */
+  --ink-700: #2a2e33; /* faint inner border */
 
-  /* Status lights */
+  /* Slate — secondary text + hollow/stale states */
+  --slate-400: #8a8f98; /* secondary text, telemetry labels */
+  --slate-500: #6c7077; /* muted captions, manifest keys */
+  --slate-600: #4a4e53; /* hollow maturity-dot ring */
+  --slate-650: #3a3e43; /* stale dot fill */
+
+  /* Paper — text on dark */
+  --paper-100: #ecedee; /* primary text */
+  --paper-200: #b6babf; /* body text */
+  --paper-50: #f7f8f8; /* light-mode bg (if ever used) */
+
+  /* Accent — ci-bone is the only signal color on a parent page */
+  --ci-bone: #e6e1d5;
+  --ci-pulse: #c7f25a; /* DEFERRED alternate — do not use anywhere */
+
+  /* Repo alias tokens, re-pointed at DS values (no parallel system) */
+  --ink-850: var(--ink-900); /* legacy card alias → DS card */
+  --ink-600: var(--ink-700);
+  --line: var(--ink-800); /* hairlines = ink-800 (DS editorial rule) */
+  --line-soft: var(--ink-700);
+  --fg: var(--paper-100);
+  --fg-muted: var(--paper-200);
+  --fg-dim: var(--slate-400);
+
+  /* Status lights — kept for ph-34 badge restyle (NOT the parent signal) */
   --live: #3fb562;
   --beta: #e0a53b;
   --concept: #8b8fa3;
-  --dormant: #6b7280;
+  --dormant: var(--slate-650);
   --retired: #4b5059;
 
-  /* Default accent (overridden per-project via --accent) */
-  --accent: #3fb562;
+  /* Default accent — parent = ci-bone; project pages override via accent_hex */
+  --accent: var(--ci-bone);
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
-    Helvetica, Arial, sans-serif;
-  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
-  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code', Menlo,
+  /* Type — DS families, loaded via @fontsource-variable in BaseLayout.
+   * Mono = the visual cue that a number is live, not typed. */
+  --font-display: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system,
+    sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Menlo,
     monospace;
+  --font-serif: var(--font-display); /* DS has no serif — headings use display */
 
-  --maxw: 72rem;
+  /* Radius + motion (DS §Spacing, radius, motion) */
+  --radius-card: 4px;
+  --radius-chip: 3px;
+  --radius-pill: 999px;
+  --pulse-duration: 1.8s;
 
-  /* ===========================================================================
-   * Compound Interests brand tokens (ph-15) — BRAND-ARCHITECTURE-v1.md §3/§4/§5.
-   * Consolidated ADDITIVELY: only net-new names are introduced here. The repo's
-   * existing --ink-900/800, --font-sans, --font-mono, and status lights remain
-   * canonical and are NOT overwritten (repo --live #3fb562 / --beta #e0a53b
-   * already equal the §5.1/§5.2 brand anchors). Accent ramp 500 = named anchor;
-   * 50/900 endpoints verbatim from §5, 100–800 interpolated defaults.
-   * ========================================================================= */
+  /* Editorial container */
+  --maxw: 1000px;
 
-  /* Parent — the "alive/heartbeat" signal (live dots, the CI mark). §3. */
-  --ci-pulse: #c7f25a; /* electric lime */
-
-  /* Net-new neutrals (do not collide with the repo ink scale). §3. */
-  --ink-950: #0b0c0e;
-  --slate-400: #8a8f98;
-  --paper-100: #ecedee;
-  --paper-50: #f7f8f8;
-
-  /* Display face. §3 ("Type system"). Falls back safely until a font is loaded. */
-  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  /* ---------------------------------------------------------------------------
+   * Sub-brand accent ramps (ph-15) — OUT OF SCOPE for parent pages (DS §scope).
+   * Parked for capsule/sub-brand use later; nothing on a parent page reads them.
+   * ------------------------------------------------------------------------- */
 
   /* 5.1 Speakeasy Growroom — grow-green (anchor #3FB562) */
   --grow-green-50: #eaf7ef;
@@ -109,7 +133,7 @@
 }
 
 html {
-  background: var(--ink-900);
+  background: var(--ink-950);
   color: var(--fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -141,9 +165,11 @@ pre,
 }
 
 .wrap {
+  /* Editorial container: 1000px, 48px gutters (clamped so small screens don't
+     overflow). DS §Spacing — "air + hairlines, not boxes". */
   max-width: var(--maxw);
   margin-inline: auto;
-  padding-inline: 1.5rem;
+  padding-inline: clamp(1.25rem, 5vw, 3rem);
 }
 
 /* Eyebrow / section kicker */
@@ -153,6 +179,31 @@ pre,
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--fg-dim);
+}
+
+/* Heartbeat / live dot — the only ambient animation in the system (DS §3).
+   Live data animates, chrome does not. ph-34 wires these onto the real feed. */
+@keyframes ciPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(230, 225, 213, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(230, 225, 213, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(230, 225, 213, 0);
+  }
+}
+.ci-heartbeat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: var(--radius-pill);
+  background: var(--ci-bone);
+  animation: ciPulse var(--pulse-duration) ease-out infinite;
+}
+.ci-heartbeat-dot--stale {
+  background: var(--slate-650);
+  animation: none;
 }
 
 .case-study .legal-line {

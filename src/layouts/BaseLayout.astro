@@ -1,4 +1,11 @@
 ---
+// Parent design system fonts (ph-33) — Google/OFL, self-hosted via @fontsource.
+// Variable axes cover every weight the DS calls for (Space Grotesk 400–700,
+// Inter 400–600, JetBrains Mono 400–700). Imported before global.css so the
+// --font-* tokens resolve to loaded faces.
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 
 interface Props {
