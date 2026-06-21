@@ -9,6 +9,7 @@ import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import Wordmark from '@components/brand/Wordmark.astro';
 import CompoundingMark from '@components/brand/CompoundingMark.astro';
+import Analytics from '@vercel/analytics/astro';
 
 interface Props {
   title: string;
@@ -104,6 +105,10 @@ const year = new Date().getUTCFullYear();
         <span class="footer-tag mono">systems that compound · {year}</span>
       </div>
     </footer>
+
+    <!-- Cookieless page views + custom events (ph-27). No cookies, no PII,
+         no client secret. Enable Web Analytics in the Vercel project dashboard. -->
+    <Analytics />
 
     <style>
       .site-header {

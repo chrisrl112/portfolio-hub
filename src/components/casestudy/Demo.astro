@@ -3,8 +3,10 @@ import type { Demo, DemoType } from '@lib/manifests';
 
 interface Props {
   demo: Demo;
+  /** Manifest slug — carried on the demo_start analytics event (ph-27). */
+  slug: string;
 }
-const { demo } = Astro.props;
+const { demo, slug } = Astro.props;
 
 const verb: Record<DemoType, string> = {
   embed: 'Watch it live',
@@ -20,7 +22,7 @@ const note: Record<DemoType, string> = {
 };
 ---
 
-<div class="demo">
+<div class="demo" data-demo-root data-demo-slug={slug} data-demo-type={demo.type}>
   <div class="demo-head">
     <span class="demo-type mono">{demo.type}</span>
     <span class="demo-verb">{verb[demo.type]}</span>
@@ -35,6 +37,47 @@ const note: Record<DemoType, string> = {
     <span class="pending">live surface wires up post-MVP (P2 / P4)</span>
   </div>
 </div>
+
+<script>
+  // demo_start (ph-27) — fires once per page on the real "start" signal for the
+  // demo's type. Bindings are future-proof: until the live embed/video/launch
+  // surface lands (P2/P4) those elements don't exist yet, so nothing fires for
+  // those types — no false "start". watch-only fires when the read-only artifact
+  // scrolls into view (its only "start" affordance).
+  import { trackDemoStart, type DemoType } from '@lib/analytics';
+
+  const root = document.querySelector<HTMLElement>('[data-demo-root]');
+  if (root) {
+    const slug = root.dataset.demoSlug ?? '';
+    const type = root.dataset.demoType as DemoType;
+    let fired = false;
+    const fire = () => {
+      if (fired || !slug) return;
+      fired = true;
+      trackDemoStart(slug, type);
+    };
+
+    if (type === 'launch') {
+      root.querySelector('a')?.addEventListener('click', fire);
+    } else if (type === 'video') {
+      root.querySelector('video')?.addEventListener('play', fire, { once: true });
+    } else if (type === 'embed') {
+      root.querySelector('iframe')?.addEventListener('load', fire, { once: true });
+    } else {
+      // watch-only: "start" = the read-only artifact scrolled into view.
+      const obs = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((en) => en.isIntersecting)) {
+            fire();
+            obs.disconnect();
+          }
+        },
+        { threshold: 0.4 },
+      );
+      obs.observe(root);
+    }
+  }
+</script>
 
 <style>
   .demo {

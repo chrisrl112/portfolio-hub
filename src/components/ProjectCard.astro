@@ -15,7 +15,7 @@ const hb = getHeartbeat(project);
 const ctaVerb = project.demo.type === 'launch' ? 'Open the demo' : 'View case study';
 ---
 
-<a class="card" href={project.links.page}>
+<a class="card" href={project.links.page} data-capsule-slug={project.slug}>
   <div class="card-body">
     <StatusBadge status={project.status} maturity={project.maturity} />
 
@@ -52,6 +52,20 @@ const ctaVerb = project.demo.type === 'launch' ? 'Open the demo' : 'View case st
     </div>
   </div>
 </a>
+
+<script>
+  // Delegated capsule_click (ph-27). The whole tile is the <a>; a delegated
+  // listener covers every card with one binding. Astro hoists this module once
+  // per page even though ProjectCard renders N times. The Vercel beacon uses
+  // sendBeacon, so the event survives the click-through navigation.
+  import { trackCapsuleClick } from '@lib/analytics';
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement | null;
+    const a = target?.closest?.('a[data-capsule-slug]');
+    const slug = a?.getAttribute('data-capsule-slug');
+    if (slug) trackCapsuleClick(slug);
+  });
+</script>
 
 <style>
   /* Locked home card (round 2): panel fill, 3px top accent keyline, hairline
