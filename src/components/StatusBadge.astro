@@ -3,8 +3,14 @@ import type { ManifestStatus } from '@lib/manifests';
 
 interface Props {
   status: ManifestStatus;
+  /**
+   * Optional staleness-honesty note (e.g. "no heartbeat 5d"), rendered beside
+   * the badge when present (§3.3 / §9.4). The dormant auto-flip is computed
+   * upstream from heartbeat age; this only displays what it is handed.
+   */
+  staleNote?: string;
 }
-const { status } = Astro.props;
+const { status, staleNote } = Astro.props;
 
 const colors: Record<ManifestStatus, string> = {
   live: 'var(--live)',
@@ -16,13 +22,30 @@ const colors: Record<ManifestStatus, string> = {
 const color = colors[status];
 ---
 
-<span class="badge" style={`--dot: ${color}`}>
-  <span class="dot" class:list={[{ pulse: status === 'live' }]} aria-hidden="true"
-  ></span>
-  {status}
+<span class="badge-wrap">
+  <span class="badge" style={`--dot: ${color}`}>
+    <span class="dot" class:list={[{ pulse: status === 'live' }]} aria-hidden="true"
+    ></span>
+    {status}
+  </span>
+  {staleNote && (
+    <span class="stale" title="Staleness honesty (§3.3)">{staleNote}</span>
+  )}
 </span>
 
 <style>
+  .badge-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .stale {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    color: var(--dormant);
+  }
   .badge {
     display: inline-flex;
     align-items: center;

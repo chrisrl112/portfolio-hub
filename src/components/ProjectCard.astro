@@ -1,5 +1,5 @@
 ---
-import type { Manifest } from '@lib/manifests';
+import { computeStaleNote, type Manifest } from '@lib/manifests';
 import StatusBadge from '@components/StatusBadge.astro';
 import MaturityMeter from '@components/MaturityMeter.astro';
 
@@ -8,6 +8,7 @@ interface Props {
 }
 const { project } = Astro.props;
 const headline = project.metrics.slice(0, 2);
+const staleNote = computeStaleNote(project.last_heartbeat);
 ---
 
 <a
@@ -16,7 +17,7 @@ const headline = project.metrics.slice(0, 2);
   style={project.accent_hex ? `--accent: ${project.accent_hex}` : undefined}
 >
   <div class="card-top">
-    <StatusBadge status={project.status} />
+    <StatusBadge status={project.status} staleNote={staleNote} />
     <MaturityMeter maturity={project.maturity} />
   </div>
 

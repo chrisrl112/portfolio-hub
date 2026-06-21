@@ -41,6 +41,12 @@ export interface Manifest {
   status: ManifestStatus;
   maturity: number;
   started: string;
+  /**
+   * ISO-8601 timestamp of the project's last sign of life. Populated by the P2
+   * heartbeat layer; absent until then. Drives the StatusBadge staleness note
+   * and the dormant invariant guard below (ph-15, §3.3 / §9.4).
+   */
+  last_heartbeat?: string;
   accent?: string;
   accent_hex?: string;
   visibility: { public: boolean };
@@ -51,6 +57,37 @@ export interface Manifest {
   links: { live?: string; repo?: string; page: string };
   metrics: Metric[];
   patterns: string[];
+}
+
+/**
+ * Days without a heartbeat after which a project is considered dormant
+ * (BUILD_BRIEF §3.3 / §9.4). The status auto-flip to "dormant" is an upstream
+ * (P2) concern; here the constant powers the staleness note and the build-time
+ * invariant guard.
+ */
+export const DORMANT_DAYS = 14;
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/**
+ * Whole days elapsed since `lastActivity`, or null if no/invalid timestamp.
+ */
+function daysSince(lastActivity?: string | null, now: Date = new Date()): number | null {
+  if (!lastActivity) return null;
+  const then = new Date(lastActivity).getTime();
+  if (Number.isNaN(then)) return null;
+  return Math.floor((now.getTime() - then) / MS_PER_DAY);
+}
+
+/**
+ * The staleness-honesty note for the StatusBadge `staleNote` slot (§3.3 / §9.4).
+ * Returns "No heartbeat in Nd" once a day has elapsed, or "" when the project is
+ * fresh or has no recorded heartbeat (→ badge renders unchanged). The note only
+ * SURFACES the gap; the dormant status flip itself happens upstream.
+ */
+export function computeStaleNote(lastActivity?: string | null, now: Date = new Date()): string {
+  const d = daysSince(lastActivity, now);
+  return d !== null && d >= 1 ? `No heartbeat in ${d}d` : '';
 }
 
 const ajv = new Ajv({ allErrors: true });
@@ -89,6 +126,17 @@ function loadManifests(): Manifest[] {
     if (manifest.links.page !== `/projects/${manifest.slug}`) {
       throw new Error(
         `Manifest links.page "${manifest.links.page}" must be "/projects/${manifest.slug}" (${path}).`,
+      );
+    }
+
+    // Invariant (§9.4): a project stale past the dormant threshold can never
+    // read "live". The flip to "dormant" is upstream (P2); enforce it here so a
+    // badge can never silently lie. Inert until last_heartbeat is populated.
+    const stale = daysSince(manifest.last_heartbeat);
+    if (stale !== null && stale >= DORMANT_DAYS && manifest.status === 'live') {
+      throw new Error(
+        `Manifest "${manifest.slug}" is "live" but has had no heartbeat in ${stale}d ` +
+          `(>= ${DORMANT_DAYS}d dormant threshold, §9.4). Flip status to "dormant" upstream (${path}).`,
       );
     }
 

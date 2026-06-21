@@ -57,6 +57,11 @@
       "type": "string",
       "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
     },
+    "last_heartbeat": {
+      "description": "ISO-8601 date or date-time of the project's last sign of life. Optional; populated by the P2 heartbeat layer. Drives the StatusBadge staleness note and the 14-day dormant invariant (§3.3 / §9.4).",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}([T ][0-9]{2}:[0-9]{2}(:[0-9]{2})?(\\.[0-9]+)?(Z|[+-][0-9]{2}:?[0-9]{2})?)?$"
+    },
     "accent": {
       "description": "Per-project accent token name (one accent color per project, §4.5).",
       "type": "string"
@@ -152,9 +157,23 @@
       }
     },
     "patterns": {
-      "description": "Tags linking to the Patterns library (§4.4).",
+      "description": "Tags from the §4.4 pattern vocabulary. Enumerated so a typo'd tag fails the build (CLAUDE.md). Add a new value here when a genuinely new pattern is introduced.",
       "type": "array",
-      "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" }
+      "items": {
+        "type": "string",
+        "enum": [
+          "adversarial-review",
+          "anomaly-escalation",
+          "committee-synthesis",
+          "curator-agent",
+          "daily-loop",
+          "heartbeat-monitoring",
+          "human-approve-gate",
+          "manifest-driven-content",
+          "researcher-critic-editor",
+          "staleness-honesty"
+        ]
+      }
     }
   }
 }
