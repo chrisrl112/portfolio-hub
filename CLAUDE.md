@@ -61,3 +61,23 @@ runs live demos of every system I build. Brand: **Compound Interests**
 ## Phase order (§8) — do not skip ahead
 P0 rails (this) → P1 hub MVP → P2 live layer → P3 automation → P4 polish.
 Ship P1 before touching P2.
+
+## Portfolio Hub is steered from Cowork — read the queue first
+This repo is the **build target**, not the source of truth. The work queue, the wave plan, and all staged drop-in artifacts live in Chris's **Cowork workspace** (a separate folder on this Mac), NOT in this repo.
+
+**Before starting Portfolio Hub work, read:**
+- **The queue (what to build, in order):** `/Users/chrisliquin/Documents/Claude/Projects/Portfolio Hub/CODE-QUEUE.md`
+- **Staged drop-in artifacts the queue references:** `/Users/chrisliquin/Documents/Claude/Projects/Portfolio Hub/build-prep/`
+- **The why + the wave order (context, if needed):** `/Users/chrisliquin/Documents/Claude/Projects/Mission Control/strategy/portfolio-hub.md` and `…/portfolio-hub-backlog.md`
+
+Work the top **"🛠 Ready to ship"** item by priority. **Do NOT** use `docs/BUILD_BRIEF.md` §11/§12 as the queue — that's the old backlog and predates the wave plan; it will send you at the wrong work.
+
+**When you finish shipping an item, close the loop back to Cowork:**
+1. In `CODE-QUEUE.md`, move the item to the **"✅ Shipped"** section with today's date.
+2. Append ONE line to the handoff inbox so the night shift + clerk reconcile it:
+   `/Users/chrisliquin/Documents/Claude/Projects/Mission Control/handoff_inbox.jsonl`
+   ```json
+   {"ts":"<ISO8601>","project":"portfolio-hub","cwd":"<this repo path>","summary":"shipped <ph-id>: <what>","done":["..."],"next":["..."],"blockers":[],"owner":"Chris"}
+   ```
+
+Context flows **Cowork → Code** (you read the queue) and **Code → Cowork** (you write back the handoff). Cowork stays the source of truth; this repo stays the build target.
