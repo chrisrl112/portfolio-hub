@@ -10,11 +10,7 @@ const headline = project.metrics.slice(0, 2);
 const staleNote = computeStaleNote(project.last_heartbeat);
 ---
 
-<a
-  class="card"
-  href={project.links.page}
-  style={project.accent_hex ? `--accent: ${project.accent_hex}` : undefined}
->
+<a class="card" href={project.links.page}>
   <div class="card-top">
     <StatusBadge
       status={project.status}

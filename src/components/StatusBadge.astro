@@ -57,12 +57,12 @@ const { status, maturity, staleNote } = Astro.props;
   /* LIVE — filled bone, ink text. BETA — bone outline. CONCEPT — dotted slate.
      dormant / retired are not a live signal → muted slate, never bone. */
   .chip-live {
-    background: var(--ci-bone);
-    color: var(--ink-950);
+    background: var(--accent);
+    color: var(--on-accent);
   }
   .chip-beta {
-    color: var(--ci-bone);
-    border-color: var(--ci-bone);
+    color: var(--accent);
+    border-color: var(--accent);
   }
   .chip-concept {
     color: var(--slate-400);

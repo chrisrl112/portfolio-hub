@@ -20,45 +20,64 @@
    * ci-bone is wired as the parent --accent here.
    * ========================================================================= */
 
-  /* Neutrals — locked DS scale (README §Color) */
-  --ink-950: #0b0c0e; /* page background (near-black, warm cast) */
-  --ink-900: #141619; /* cards / panels */
-  --ink-800: #1e2125; /* borders, hairlines, grid rules */
-  --ink-700: #2a2e33; /* faint inner border */
+  /* ===========================================================================
+   * LIGHT THEME — overrides the locked dark spec at Chris's direction
+   * (2026-06-21). The DS palette is dark-first; here the surface/text ROLES are
+   * remapped to light (token NAMES retained for compatibility, values flipped).
+   * The SIGNAL accent flips to ink, because ci-bone is invisible on a light
+   * ground; bone survives as a warm fill (the marks, the monogram favicon).
+   * --on-accent is the readable text on an accent fill — luminance-picked per
+   * sub-brand accent in BaseLayout so green/amber/blue CTAs stay legible.
+   * ========================================================================= */
 
-  /* Slate — secondary text + hollow/stale states */
-  --slate-400: #8a8f98; /* secondary text, telemetry labels */
-  --slate-500: #6c7077; /* muted captions, manifest keys */
-  --slate-600: #4a4e53; /* hollow maturity-dot ring */
-  --slate-650: #3a3e43; /* stale dot fill */
+  /* Surfaces (light) */
+  --ink-950: #f4f5f6; /* page background */
+  --ink-900: #ffffff; /* cards / panels / pills */
+  --ink-800: #e3e5e8; /* code bg / strong hairline */
+  --ink-700: #edeff1; /* faint inner border */
 
-  /* Paper — text on dark */
-  --paper-100: #ecedee; /* primary text */
-  --paper-200: #b6babf; /* body text */
-  --paper-50: #f7f8f8; /* light-mode bg (if ever used) */
+  /* Slate — muted text + hollow/stale states (rings lightened for light bg) */
+  --slate-400: #8a8f98; /* secondary text */
+  --slate-500: #6c7077; /* captions, manifest keys */
+  --slate-600: #cbced3; /* hollow maturity-dot ring */
+  --slate-650: #c2c6cc; /* stale dot fill = "off / not reporting" */
 
-  /* Accent — ci-bone is the only signal color on a parent page */
-  --ci-bone: #e6e1d5;
-  --ci-pulse: #c7f25a; /* DEFERRED alternate — do not use anywhere */
+  /* Paper (true values) */
+  --paper-100: #ecedee;
+  --paper-200: #b6babf;
+  --paper-50: #f7f8f8;
 
-  /* Repo alias tokens, re-pointed at DS values (no parallel system) */
-  --ink-850: var(--ink-900); /* legacy card alias → DS card */
+  /* Brand fill + deferred alt */
+  --ci-bone: #e6e1d5; /* warm brand fill — marks/favicon; the signal is --accent */
+  --ci-pulse: #c7f25a; /* DEFERRED — do not use */
+
+  /* Text (dark on light) */
+  --fg: #14171b; /* primary text */
+  --fg-muted: #44484e; /* body text */
+  --fg-dim: #6c7077; /* captions */
+
+  /* Repo alias tokens, re-pointed (no parallel system) */
+  --ink-850: var(--ink-900); /* card alias */
   --ink-600: var(--ink-700);
-  --line: var(--ink-800); /* hairlines = ink-800 (DS editorial rule) */
-  --line-soft: var(--ink-700);
-  --fg: var(--paper-100);
-  --fg-muted: var(--paper-200);
-  --fg-dim: var(--slate-400);
+  --line: #e0e2e5; /* hairline */
+  --line-soft: #edeff1;
 
-  /* Status lights — kept for ph-34 badge restyle (NOT the parent signal) */
-  --live: #3fb562;
-  --beta: #e0a53b;
+  /* Compounding-mark fills — themed so the mark reads on a light ground */
+  --mark-sm: #cbced3;
+  --mark-md: #8a8f98;
+  --mark-lg: var(--accent);
+
+  /* Automation traffic-light (case-study Loops) — darkened for light bg */
+  --live: #2f8f4e;
+  --beta: #b07d23;
   --concept: #8b8fa3;
   --dormant: var(--slate-650);
-  --retired: #4b5059;
+  --retired: #9aa0a8;
 
-  /* Default accent — parent = ci-bone; project pages override via accent_hex */
-  --accent: var(--ci-bone);
+  /* Signal accent — ink on light. Project pages override --accent +
+     --on-accent via accent_hex (BaseLayout); parent pages use ink. */
+  --accent: #14171b;
+  --on-accent: #f7f8f8;
 
   /* Type — DS families, loaded via @fontsource-variable in BaseLayout.
    * Mono = the visual cue that a number is live, not typed. */
@@ -185,20 +204,20 @@ pre,
    Live data animates, chrome does not. ph-34 wires these onto the real feed. */
 @keyframes ciPulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(230, 225, 213, 0.55);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent);
   }
   70% {
-    box-shadow: 0 0 0 7px rgba(230, 225, 213, 0);
+    box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(230, 225, 213, 0);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent);
   }
 }
 .ci-heartbeat-dot {
   width: 9px;
   height: 9px;
   border-radius: var(--radius-pill);
-  background: var(--ci-bone);
+  background: var(--accent);
   animation: ciPulse var(--pulse-duration) ease-out infinite;
 }
 .ci-heartbeat-dot--stale {

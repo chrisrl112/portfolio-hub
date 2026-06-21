@@ -24,6 +24,21 @@ const {
 
 const fullTitle =
   title === 'Compound Interests' ? title : `${title} · Compound Interests`;
+
+// Project pages set a sub-brand --accent (accent_hex). On the light theme, pick
+// readable text for fills on that accent by its relative luminance so green /
+// amber / blue CTAs and LIVE chips stay legible. Parent pages use the :root ink
+// accent (--on-accent already light there).
+function onAccentFor(hex: string): string {
+  const h = hex.replace('#', '');
+  if (h.length !== 6) return '#f7f8f8';
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return lum > 0.5 ? '#0b0c0e' : '#f7f8f8';
+}
+const bodyStyle = accent
+  ? `--accent: ${accent}; --on-accent: ${onAccentFor(accent)}; --mark-lg: ${accent}`
+  : undefined;
 ---
 
 <!doctype html>
@@ -39,7 +54,7 @@ const fullTitle =
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
   </head>
-  <body style={accent ? `--accent: ${accent}` : undefined}>
+  <body style={bodyStyle}>
     <header class="site-header">
       <div class="wrap header-inner">
         <a href="/" class="brand">
