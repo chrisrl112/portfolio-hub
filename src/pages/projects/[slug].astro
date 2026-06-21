@@ -53,7 +53,12 @@ const started = new Date(`${project.started}-01T00:00:00`).toLocaleDateString(
 );
 ---
 
-<BaseLayout title={project.name} description={project.tagline} accent={accent}>
+<BaseLayout
+  title={project.name}
+  description={project.tagline}
+  accent={accent}
+  ogImage={`/og/${project.slug}.png`}
+>
   <article class="case-study">
     <!-- 01 · Hero -->
     <header class="hero wrap">
