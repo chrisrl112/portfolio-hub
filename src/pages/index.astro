@@ -1,17 +1,10 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectCard from '@components/ProjectCard.astro';
-import { getProjects, type ManifestStatus } from '@lib/manifests';
+import { getProjects } from '@lib/manifests';
 
 const projects = getProjects();
 
-const statusColor: Record<ManifestStatus, string> = {
-  live: 'var(--live)',
-  beta: 'var(--beta)',
-  concept: 'var(--concept)',
-  dormant: 'var(--dormant)',
-  retired: 'var(--retired)',
-};
 const liveCount = projects.filter((p) => p.status === 'live').length;
 ---
 
@@ -24,13 +17,14 @@ const liveCount = projects.filter((p) => p.status === 'live').length;
     <div class="status-strip" role="list" aria-label="System status">
       {
         projects.map((p) => (
-          <a
-            class="strip-item"
-            role="listitem"
-            href={p.links.page}
-            style={`--dot: ${statusColor[p.status]}`}
-          >
-            <span class="strip-dot" class:list={[{ pulse: p.status === 'live' }]} />
+          <a class="strip-item" role="listitem" href={p.links.page}>
+            <span
+              class:list={[
+                'ci-heartbeat-dot',
+                { 'ci-heartbeat-dot--stale': p.status !== 'live' },
+              ]}
+              aria-hidden="true"
+            />
             <span class="strip-name">{p.name}</span>
             <span class="strip-status mono">{p.status}</span>
           </a>
@@ -96,32 +90,13 @@ const liveCount = projects.filter((p) => p.status === 'live').length;
     transition: border-color 0.18s ease;
   }
   .strip-item:hover {
-    border-color: color-mix(in srgb, var(--dot) 55%, var(--line));
-  }
-  .strip-dot {
-    width: 0.55rem;
-    height: 0.55rem;
-    border-radius: 999px;
-    background: var(--dot);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--dot) 20%, transparent);
+    border-color: color-mix(in srgb, var(--ci-bone) 40%, var(--line));
   }
   .strip-status {
     font-size: 0.7rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--fg-dim);
-  }
-  .pulse {
-    animation: pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%,
-    100% {
-      box-shadow: 0 0 0 0 color-mix(in srgb, var(--dot) 55%, transparent);
-    }
-    50% {
-      box-shadow: 0 0 0 5px color-mix(in srgb, var(--dot) 0%, transparent);
-    }
   }
   .strip-note {
     margin-top: 0.9rem;

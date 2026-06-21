@@ -1,32 +1,25 @@
 ---
 import type { ManifestStatus } from '@lib/manifests';
+import MaturityMeter from '@components/MaturityMeter.astro';
 
 interface Props {
   status: ManifestStatus;
+  /** When provided, the maturity dots render inside the keystone pill. */
+  maturity?: number;
   /**
-   * Optional staleness-honesty note (e.g. "no heartbeat 5d"), rendered beside
-   * the badge when present (§3.3 / §9.4). The dormant auto-flip is computed
-   * upstream from heartbeat age; this only displays what it is handed.
+   * Optional staleness-honesty note (e.g. "No heartbeat in 5d"), rendered
+   * beside the pill when present (§3.3 / §9.4). The dormant auto-flip is
+   * computed upstream from heartbeat age; this only displays what it is handed.
    */
   staleNote?: string;
 }
-const { status, staleNote } = Astro.props;
-
-const colors: Record<ManifestStatus, string> = {
-  live: 'var(--live)',
-  beta: 'var(--beta)',
-  concept: 'var(--concept)',
-  dormant: 'var(--dormant)',
-  retired: 'var(--retired)',
-};
-const color = colors[status];
+const { status, maturity, staleNote } = Astro.props;
 ---
 
 <span class="badge-wrap">
-  <span class="badge" style={`--dot: ${color}`}>
-    <span class="dot" class:list={[{ pulse: status === 'live' }]} aria-hidden="true"
-    ></span>
-    {status}
+  <span class="badge">
+    <span class:list={['chip', `chip-${status}`]}>{status}</span>
+    {maturity != null && <MaturityMeter maturity={maturity} />}
   </span>
   {staleNote && (
     <span class="stale" title="Staleness honesty (§3.3)">{staleNote}</span>
@@ -34,49 +27,61 @@ const color = colors[status];
 </span>
 
 <style>
+  /* Keystone status/maturity badge — Parent Design System v1 (ph-34).
+     One ink-900 pill, mono throughout; ci-bone is the only signal color. */
   .badge-wrap {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--ink-900);
+    border-radius: var(--radius-pill);
+    padding: 0.5rem 0.9rem;
+    font-family: var(--font-mono);
+  }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem; /* 11px */
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 0.19rem 0.56rem; /* ~3px 9px */
+    border-radius: var(--radius-chip);
+    border: 1px solid transparent; /* keep all variants the same height */
+    white-space: nowrap;
+  }
+  /* LIVE — filled bone, ink text. BETA — bone outline. CONCEPT — dotted slate.
+     dormant / retired are not a live signal → muted slate, never bone. */
+  .chip-live {
+    background: var(--ci-bone);
+    color: var(--ink-950);
+  }
+  .chip-beta {
+    color: var(--ci-bone);
+    border-color: var(--ci-bone);
+  }
+  .chip-concept {
+    color: var(--slate-400);
+    border-style: dotted;
+    border-color: var(--slate-400);
+  }
+  .chip-dormant {
+    color: var(--slate-400);
+    border-color: var(--slate-600);
+  }
+  .chip-retired {
+    color: var(--slate-500);
+    border-color: var(--slate-600);
   }
   .stale {
     font-family: var(--font-mono);
     font-size: 0.66rem;
     font-style: italic;
     letter-spacing: 0.04em;
-    color: var(--dormant);
-  }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--fg-muted);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 0.25rem 0.6rem;
-    background: var(--ink-800);
-  }
-  .dot {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 999px;
-    background: var(--dot);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--dot) 20%, transparent);
-  }
-  .pulse {
-    animation: pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%,
-    100% {
-      box-shadow: 0 0 0 0 color-mix(in srgb, var(--dot) 55%, transparent);
-    }
-    50% {
-      box-shadow: 0 0 0 5px color-mix(in srgb, var(--dot) 0%, transparent);
-    }
+    color: var(--slate-400);
   }
 </style>

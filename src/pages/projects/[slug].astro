@@ -1,9 +1,9 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import StatusBadge from '@components/StatusBadge.astro';
-import MaturityMeter from '@components/MaturityMeter.astro';
 import MetricStat from '@components/MetricStat.astro';
 import { computeStaleNote, getProjects, type Manifest } from '@lib/manifests';
+// MaturityMeter now renders inside StatusBadge (the keystone pill, ph-34).
 
 export async function getStaticPaths() {
   return getProjects().map((project) => ({
@@ -48,8 +48,11 @@ const started = new Date(`${project.started}-01T00:00:00`).toLocaleDateString(
     <header class="hero wrap">
       <a href="/#systems" class="back mono">← all systems</a>
       <div class="hero-badges">
-        <StatusBadge status={project.status} staleNote={staleNote} />
-        <MaturityMeter maturity={project.maturity} />
+        <StatusBadge
+          status={project.status}
+          maturity={project.maturity}
+          staleNote={staleNote}
+        />
         <span class="started mono">since {started}</span>
       </div>
       <h1>{project.name}</h1>

@@ -8,34 +8,39 @@ const steps = [1, 2, 3, 4, 5];
 ---
 
 <span class="meter" title={`Maturity ${maturity} / 5`}>
-  <span class="bars" aria-hidden="true">
-    {steps.map((s) => <span class:list={['bar', { on: s <= maturity }]} />)}
+  <span class="dots" aria-hidden="true">
+    {steps.map((s) => <span class:list={['dot', { on: s <= maturity }]} />)}
   </span>
   {showLabel && <span class="label">{maturity}/5</span>}
 </span>
 
 <style>
+  /* Maturity dots — Parent Design System v1 (ph-34). Five 8px dots, 5px gap;
+     filled = ci-bone, empty = 1px slate ring. Honest immaturity made legible. */
   .meter {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
   }
-  .bars {
+  .dots {
     display: inline-flex;
-    gap: 0.18rem;
+    gap: 5px;
   }
-  .bar {
-    width: 0.55rem;
-    height: 0.85rem;
-    border-radius: 1px;
-    background: var(--ink-600);
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    box-sizing: border-box;
+    background: transparent;
+    border: 1px solid var(--slate-600);
   }
-  .bar.on {
-    background: var(--accent);
+  .dot.on {
+    background: var(--ci-bone);
+    border-color: transparent;
   }
   .label {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--fg-dim);
+    font-size: 0.6875rem; /* 11px */
+    color: var(--slate-400);
   }
 </style>
