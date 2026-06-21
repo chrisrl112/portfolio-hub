@@ -37,6 +37,75 @@
     monospace;
 
   --maxw: 72rem;
+
+  /* ===========================================================================
+   * Compound Interests brand tokens (ph-15) — BRAND-ARCHITECTURE-v1.md §3/§4/§5.
+   * Consolidated ADDITIVELY: only net-new names are introduced here. The repo's
+   * existing --ink-900/800, --font-sans, --font-mono, and status lights remain
+   * canonical and are NOT overwritten (repo --live #3fb562 / --beta #e0a53b
+   * already equal the §5.1/§5.2 brand anchors). Accent ramp 500 = named anchor;
+   * 50/900 endpoints verbatim from §5, 100–800 interpolated defaults.
+   * ========================================================================= */
+
+  /* Parent — the "alive/heartbeat" signal (live dots, the CI mark). §3. */
+  --ci-pulse: #c7f25a; /* electric lime */
+
+  /* Net-new neutrals (do not collide with the repo ink scale). §3. */
+  --ink-950: #0b0c0e;
+  --slate-400: #8a8f98;
+  --paper-100: #ecedee;
+  --paper-50: #f7f8f8;
+
+  /* Display face. §3 ("Type system"). Falls back safely until a font is loaded. */
+  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+
+  /* 5.1 Speakeasy Growroom — grow-green (anchor #3FB562) */
+  --grow-green-50: #eaf7ef;
+  --grow-green-100: #cfeedb;
+  --grow-green-200: #a6debc;
+  --grow-green-300: #7bcd9c;
+  --grow-green-400: #5ac27f;
+  --grow-green-500: #3fb562;
+  --grow-green-600: #339753;
+  --grow-green-700: #277843;
+  --grow-green-800: #1b5a32;
+  --grow-green-900: #0e3d22;
+
+  /* 5.2 Claude Investment Portfolio — ledger-amber (anchor #E0A53B) */
+  --ledger-amber-50: #fbf3e2;
+  --ledger-amber-100: #f6e6c2;
+  --ledger-amber-200: #efd297;
+  --ledger-amber-300: #e9be6b;
+  --ledger-amber-400: #e4b250;
+  --ledger-amber-500: #e0a53b;
+  --ledger-amber-600: #bc8730;
+  --ledger-amber-700: #966a26;
+  --ledger-amber-800: #74531b;
+  --ledger-amber-900: #5a3d0e;
+
+  /* 5.3 The Woodshed — brass (anchor #B5894E) */
+  --brass-50: #f6eee2;
+  --brass-100: #ebdcc4;
+  --brass-200: #dbc29c;
+  --brass-300: #cba873;
+  --brass-400: #c09860;
+  --brass-500: #b5894e;
+  --brass-600: #997140;
+  --brass-700: #7c5a33;
+  --brass-800: #634727;
+  --brass-900: #4a341a;
+
+  /* 5.4 Fitness OS — signal-blue (anchor #3B82F6) */
+  --signal-blue-50: #e8f0fe;
+  --signal-blue-100: #cbddfb;
+  --signal-blue-200: #9dbff9;
+  --signal-blue-300: #6fa1f7;
+  --signal-blue-400: #5491f6;
+  --signal-blue-500: #3b82f6;
+  --signal-blue-600: #2f6ad0;
+  --signal-blue-700: #2553a8;
+  --signal-blue-800: #1c4488;
+  --signal-blue-900: #15356b;
 }
 
 html {
