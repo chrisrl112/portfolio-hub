@@ -1,86 +1,34 @@
 @import 'tailwindcss';
 
-/*
-  Compound Interests — design tokens (BUILD_BRIEF §4.5)
-  Dark, industrial-luxe, editorial typography, restrained motion.
-  The motif is status lights; live data is the decoration.
-*/
+/* ===========================================================================
+ * Compound Interests — Parent Design System v1 (LOCKED, round 2)
+ * Source of truth: brand/_unzipped/design_handoff_compound_interests/
+ *   {README.md, tokens.css, BUILD-AUDIT-round1.md,
+ *    "Compound Interests - Home (Light, Locked).dc.html"}.
+ *
+ * Theme: LIGHT is canonical — warm-paper surfaces + ci-bronze #8A6F3C accent
+ * (bone is invisible on white, so light uses bronze). Dark is a supported
+ * secondary theme via [data-theme="dark"] (ci-bone accent).
+ *
+ * Components read SEMANTIC tokens (--bg/--panel/--border/--text/--body/--muted/
+ * --accent/--card-accent/--dot-empty). Legacy names (--fg/--line/--ink-*/--slate-*)
+ * are bridged onto the semantics so older component CSS themes automatically.
+ * ========================================================================= */
+
+/* ⚠ Tailwind v4 + lightningcss consume the FIRST root-matching rule after
+   `@import "tailwindcss"` into Tailwind's own `:root,:host` theme block, dropping
+   its declarations. This leading `:root` rule is the intentional shock-absorber
+   for that merge (and carries a genuinely-useful color-scheme); our real token
+   rule (`html:root`, second) then survives intact. Do NOT remove it — without it
+   the entire light-theme token block silently vanishes from the build. */
 :root {
-  /* ===========================================================================
-   * Compound Interests — Parent Design System v1 (LOCKED) · ph-33
-   * Source of truth: brand/design-system-v1/{README.md, tokens.css}.
-   * Direction: Editorial. Parent accent = ci-bone #E6E1D5 — the ONLY signal
-   * color on a parent page. ci-pulse is the deferred alternate (defined, unused).
-   *
-   * Reconciled over ph-15: the shared neutral NAMES now carry the locked DS
-   * values, and the repo's alias tokens (--fg*, --line*, --ink-850/600) are
-   * RE-POINTED at DS tokens so the whole site adopts the palette with no
-   * parallel style system and no component edits. Status-light hexes
-   * (--live/--beta/...) are intentionally left as-is for ph-34's badge restyle;
-   * ci-bone is wired as the parent --accent here.
-   * ========================================================================= */
+  color-scheme: light;
+}
 
-  /* ===========================================================================
-   * LIGHT THEME — overrides the locked dark spec at Chris's direction
-   * (2026-06-21). The DS palette is dark-first; here the surface/text ROLES are
-   * remapped to light (token NAMES retained for compatibility, values flipped).
-   * The SIGNAL accent flips to ink, because ci-bone is invisible on a light
-   * ground; bone survives as a warm fill (the marks, the monogram favicon).
-   * --on-accent is the readable text on an accent fill — luminance-picked per
-   * sub-brand accent in BaseLayout so green/amber/blue CTAs stay legible.
-   * ========================================================================= */
-
-  /* Surfaces (light) */
-  --ink-950: #f4f5f6; /* page background */
-  --ink-900: #ffffff; /* cards / panels / pills */
-  --ink-800: #e3e5e8; /* code bg / strong hairline */
-  --ink-700: #edeff1; /* faint inner border */
-
-  /* Slate — muted text + hollow/stale states (rings lightened for light bg) */
-  --slate-400: #8a8f98; /* secondary text */
-  --slate-500: #6c7077; /* captions, manifest keys */
-  --slate-600: #cbced3; /* hollow maturity-dot ring */
-  --slate-650: #c2c6cc; /* stale dot fill = "off / not reporting" */
-
-  /* Paper (true values) */
-  --paper-100: #ecedee;
-  --paper-200: #b6babf;
-  --paper-50: #f7f8f8;
-
-  /* Brand fill + deferred alt */
-  --ci-bone: #e6e1d5; /* warm brand fill — marks/favicon; the signal is --accent */
-  --ci-pulse: #c7f25a; /* DEFERRED — do not use */
-
-  /* Text (dark on light) */
-  --fg: #14171b; /* primary text */
-  --fg-muted: #44484e; /* body text */
-  --fg-dim: #6c7077; /* captions */
-
-  /* Repo alias tokens, re-pointed (no parallel system) */
-  --ink-850: var(--ink-900); /* card alias */
-  --ink-600: var(--ink-700);
-  --line: #e0e2e5; /* hairline */
-  --line-soft: #edeff1;
-
-  /* Compounding-mark fills — themed so the mark reads on a light ground */
-  --mark-sm: #cbced3;
-  --mark-md: #8a8f98;
-  --mark-lg: var(--accent);
-
-  /* Automation traffic-light (case-study Loops) — darkened for light bg */
-  --live: #2f8f4e;
-  --beta: #b07d23;
-  --concept: #8b8fa3;
-  --dormant: var(--slate-650);
-  --retired: #9aa0a8;
-
-  /* Signal accent — ink on light. Project pages override --accent +
-     --on-accent via accent_hex (BaseLayout); parent pages use ink. */
-  --accent: #14171b;
-  --on-accent: #f7f8f8;
-
-  /* Type — DS families, loaded via @fontsource-variable in BaseLayout.
-   * Mono = the visual cue that a number is live, not typed. */
+/* Canonical LIGHT theme tokens. `html:root` outranks Tailwind's `:root,:host`
+   so our font tokens win, and being second it survives the merge above. */
+html:root {
+  /* Type — DS families, loaded via @fontsource-variable in BaseLayout */
   --font-display: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system,
     sans-serif;
@@ -88,72 +36,86 @@
     monospace;
   --font-serif: var(--font-display); /* DS has no serif — headings use display */
 
-  /* Radius + motion (DS §Spacing, radius, motion) */
+  /* Radius + motion + container */
   --radius-card: 4px;
   --radius-chip: 3px;
   --radius-pill: 999px;
   --pulse-duration: 1.8s;
-
-  /* Editorial container */
   --maxw: 1000px;
+  --gutter: 32px; /* matches the locked home; clamped for small screens */
 
-  /* ---------------------------------------------------------------------------
-   * Sub-brand accent ramps (ph-15) — OUT OF SCOPE for parent pages (DS §scope).
-   * Parked for capsule/sub-brand use later; nothing on a parent page reads them.
-   * ------------------------------------------------------------------------- */
+  /* ── LIGHT THEME = CANONICAL (default) — warm paper + bronze ── */
+  --bg: #f2f0ea; /* warm paper, NOT cold white */
+  --panel: #fbfaf6; /* cards */
+  --border: #e0dcd0; /* hairlines, grid rules */
+  --text: #1a1916; /* primary text */
+  --body: #4a4640; /* body copy */
+  --muted: #8c857a; /* captions, telemetry labels */
+  --faint: #6e6a60; /* card descriptions, tagline */
+  --dot-empty: #c9c2b2; /* hollow maturity ring + stale dot */
+  --stale-text: #a39b8c; /* stale / awaiting labels */
+  --accent: #8a6f3c; /* ci-bronze — canonical signal (AA on paper) */
+  --on-accent: #fbfaf6; /* readable text on an accent fill */
+  --card-accent: var(--accent); /* per-card top keyline (sub-brands override) */
 
-  /* 5.1 Speakeasy Growroom — grow-green (anchor #3FB562) */
-  --grow-green-50: #eaf7ef;
-  --grow-green-100: #cfeedb;
-  --grow-green-200: #a6debc;
-  --grow-green-300: #7bcd9c;
-  --grow-green-400: #5ac27f;
-  --grow-green-500: #3fb562;
-  --grow-green-600: #339753;
-  --grow-green-700: #277843;
-  --grow-green-800: #1b5a32;
-  --grow-green-900: #0e3d22;
+  /* Compounding-mark fills (light palette from the locked home) */
+  --mark-sm: #b5ae9e;
+  --mark-md: #3a352b;
+  --mark-lg: #8a6f3c;
 
-  /* 5.2 Claude Investment Portfolio — ledger-amber (anchor #E0A53B) */
-  --ledger-amber-50: #fbf3e2;
-  --ledger-amber-100: #f6e6c2;
-  --ledger-amber-200: #efd297;
-  --ledger-amber-300: #e9be6b;
-  --ledger-amber-400: #e4b250;
-  --ledger-amber-500: #e0a53b;
-  --ledger-amber-600: #bc8730;
-  --ledger-amber-700: #966a26;
-  --ledger-amber-800: #74531b;
-  --ledger-amber-900: #5a3d0e;
+  /* Brand constants (theme-independent) */
+  --ci-bone: #e6e1d5; /* dark-theme accent + monogram favicon fill */
+  --ci-pulse: #c7f25a; /* deferred — not used */
 
-  /* 5.3 The Woodshed — brass (anchor #B5894E) */
-  --brass-50: #f6eee2;
-  --brass-100: #ebdcc4;
-  --brass-200: #dbc29c;
-  --brass-300: #cba873;
-  --brass-400: #c09860;
-  --brass-500: #b5894e;
-  --brass-600: #997140;
-  --brass-700: #7c5a33;
-  --brass-800: #634727;
-  --brass-900: #4a341a;
+  /* Automation traffic-light (case-study Loops only) */
+  --live: #2f8f4e;
+  --beta: #b07d23;
+  --concept: #8c857a;
+  --dormant: var(--dot-empty);
+  --retired: #9aa0a8;
 
-  /* 5.4 Fitness OS — signal-blue (anchor #3B82F6) */
-  --signal-blue-50: #e8f0fe;
-  --signal-blue-100: #cbddfb;
-  --signal-blue-200: #9dbff9;
-  --signal-blue-300: #6fa1f7;
-  --signal-blue-400: #5491f6;
-  --signal-blue-500: #3b82f6;
-  --signal-blue-600: #2f6ad0;
-  --signal-blue-700: #2553a8;
-  --signal-blue-800: #1c4488;
-  --signal-blue-900: #15356b;
+  /* ── Legacy alias bridge → semantic tokens (so older CSS themes too) ── */
+  --fg: var(--text);
+  --fg-muted: var(--body);
+  --fg-dim: var(--muted);
+  --line: var(--border);
+  --line-soft: var(--border);
+  --ink-950: var(--bg);
+  --ink-900: var(--panel);
+  --ink-850: var(--panel);
+  --ink-800: var(--border);
+  --ink-700: var(--border);
+  --ink-600: var(--border);
+  --slate-400: var(--muted);
+  --slate-500: var(--muted);
+  --slate-600: var(--dot-empty);
+  --slate-650: var(--dot-empty);
+  --paper-100: var(--text);
+  --paper-200: var(--body);
+}
+
+/* ── DARK THEME = supported secondary (ci-bone accent) ── */
+html[data-theme='dark'] {
+  --bg: #0b0c0e;
+  --panel: #141619;
+  --border: #1e2125;
+  --text: #ecedee;
+  --body: #b6babf;
+  --muted: #8a8f98;
+  --faint: #b6babf;
+  --dot-empty: #3a3e43;
+  --stale-text: #8a8f98;
+  --accent: #e6e1d5; /* ci-bone */
+  --on-accent: #0b0c0e;
+  --card-accent: var(--accent);
+  --mark-sm: #8a8f98;
+  --mark-md: #ecedee;
+  --mark-lg: #e6e1d5;
 }
 
 html {
-  background: var(--ink-950);
-  color: var(--fg);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
@@ -171,9 +133,9 @@ a {
 h1,
 h2,
 h3 {
-  font-family: var(--font-serif);
-  letter-spacing: -0.01em;
-  line-height: 1.15;
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
   font-weight: 600;
 }
 
@@ -184,27 +146,26 @@ pre,
 }
 
 .wrap {
-  /* Editorial container: 1000px, 48px gutters (clamped so small screens don't
-     overflow). DS §Spacing — "air + hairlines, not boxes". */
+  /* Editorial container — locked home uses 1000px / 32px gutters (clamped). */
   max-width: var(--maxw);
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 5vw, 3rem);
+  padding-inline: clamp(1.25rem, 5vw, var(--gutter));
 }
 
-/* Eyebrow / section kicker */
+/* Eyebrow / section kicker — mono, accent-colored when active */
 .kicker {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
+  font-size: 0.6875rem; /* 11px */
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--fg-dim);
+  color: var(--accent);
 }
 
-/* Heartbeat / live dot — the only ambient animation in the system (DS §3).
-   Live data animates, chrome does not. ph-34 wires these onto the real feed. */
+/* Heartbeat / live dot — the only ambient animation (DS §3). Live data
+   animates, chrome does not. Pulse halo is the accent (bronze / bone). */
 @keyframes ciPulse {
   0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
   }
   70% {
     box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent);
@@ -219,21 +180,28 @@ pre,
   border-radius: var(--radius-pill);
   background: var(--accent);
   animation: ciPulse var(--pulse-duration) ease-out infinite;
+  flex: none;
 }
 .ci-heartbeat-dot--stale {
-  background: var(--slate-650);
+  background: var(--dot-empty);
+  animation: none;
+}
+.ci-heartbeat-dot--awaiting {
+  background: transparent;
+  border: 1px solid var(--dot-empty);
+  box-sizing: border-box;
   animation: none;
 }
 
 .case-study .legal-line {
-  color: var(--fg-dim);
+  color: var(--muted);
   font-size: 0.9rem;
   padding-top: 1rem;
 }
 
 /* Case-study prose (MDX-rendered markdown inside .cs-body) */
 .case-study .cs-body p {
-  color: var(--fg-muted);
+  color: var(--body);
   margin: 0 0 1rem;
   max-width: 68ch;
 }
@@ -241,11 +209,11 @@ pre,
   margin-bottom: 0;
 }
 .case-study .cs-body strong {
-  color: var(--fg);
+  color: var(--text);
   font-weight: 600;
 }
 .case-study .cs-body em {
-  color: var(--fg);
+  color: var(--text);
 }
 .case-study .cs-body ul {
   margin: 0 0 1rem;
@@ -253,7 +221,7 @@ pre,
   max-width: 68ch;
 }
 .case-study .cs-body li {
-  color: var(--fg-muted);
+  color: var(--body);
   margin-bottom: 0.5rem;
 }
 .case-study .cs-body li::marker {
@@ -266,22 +234,22 @@ pre,
 .case-study .cs-body h3 {
   font-size: 1.05rem;
   margin: 1.5rem 0 0.6rem;
-  color: var(--fg);
+  color: var(--text);
 }
 .case-study .cs-body code {
   font-size: 0.85em;
-  background: var(--ink-800);
-  border: 1px solid var(--line-soft);
+  background: color-mix(in srgb, var(--accent) 8%, var(--panel));
+  border: 1px solid var(--border);
   border-radius: 0.25rem;
   padding: 0.05rem 0.35rem;
-  color: var(--fg);
+  color: var(--text);
 }
 .case-study .cs-body blockquote {
   margin: 0 0 1rem;
   padding: 0.75rem 1rem;
   border-left: 2px solid var(--accent);
-  background: var(--ink-850);
-  color: var(--fg-muted);
+  background: var(--panel);
+  color: var(--body);
   border-radius: 0 0.3rem 0.3rem 0;
 }
 .case-study .cs-body blockquote p {

@@ -8,7 +8,7 @@ import '@fontsource-variable/inter';
 import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import Wordmark from '@components/brand/Wordmark.astro';
-import EndorsementLockup from '@components/brand/EndorsementLockup.astro';
+import CompoundingMark from '@components/brand/CompoundingMark.astro';
 
 interface Props {
   title: string;
@@ -39,10 +39,12 @@ function onAccentFor(hex: string): string {
 const bodyStyle = accent
   ? `--accent: ${accent}; --on-accent: ${onAccentFor(accent)}; --mark-lg: ${accent}`
   : undefined;
+
+const year = new Date().getUTCFullYear();
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -58,10 +60,10 @@ const bodyStyle = accent
     <header class="site-header">
       <div class="wrap header-inner">
         <a href="/" class="brand">
-          <Wordmark />
+          <Wordmark markSize={24} />
         </a>
-        <nav class="site-nav">
-          <a href="/#systems">Systems</a>
+        <nav class="site-nav mono">
+          <a href="/#systems" class="active">Systems</a>
           <a href="/patterns">Patterns</a>
           <a href="/about">About</a>
         </nav>
@@ -74,69 +76,69 @@ const bodyStyle = accent
 
     <footer class="site-footer">
       <div class="wrap footer-inner">
-        <EndorsementLockup />
-        <span class="footer-tag">Systems that compound.</span>
+        <span class="footer-mark">
+          <CompoundingMark size={20} title="Compound Interests" />
+          <span class="footer-name mono">Compound Interests</span>
+        </span>
+        <span class="footer-tag mono">systems that compound · {year}</span>
       </div>
     </footer>
 
     <style>
       .site-header {
-        position: sticky;
-        top: 0;
-        z-index: 20;
-        backdrop-filter: blur(10px);
-        background: color-mix(in srgb, var(--ink-900) 82%, transparent);
-        border-bottom: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--border);
       }
       .header-inner {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 3.5rem;
+        padding-block: 20px;
       }
       .brand {
         display: inline-flex;
         align-items: center;
-        gap: 0.55rem;
         text-decoration: none;
-        font-family: var(--font-mono);
-        font-size: 0.85rem;
-        letter-spacing: 0.04em;
-      }
-      .brand-dot {
-        width: 0.6rem;
-        height: 0.6rem;
-        border-radius: 999px;
-        background: var(--accent);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
       }
       .site-nav {
         display: flex;
-        gap: 1.5rem;
-        font-size: 0.85rem;
-        color: var(--fg-muted);
+        gap: 26px;
+        font-size: 0.75rem; /* 12px */
+        letter-spacing: 0.08em;
+        color: var(--muted);
       }
       .site-nav a {
         text-decoration: none;
+        color: var(--muted);
       }
+      .site-nav a.active,
       .site-nav a:hover {
-        color: var(--fg);
+        color: var(--text);
       }
       .site-footer {
-        margin-top: 5rem;
-        border-top: 1px solid var(--line-soft);
-        padding-block: 2rem;
+        margin-top: 4rem;
+        border-top: 1px solid var(--border);
       }
       .footer-inner {
         display: flex;
-        align-items: baseline;
-        gap: 1rem;
-        color: var(--fg-dim);
-        font-size: 0.85rem;
+        align-items: center;
+        justify-content: space-between;
+        padding-block: 28px;
       }
       .footer-mark {
-        font-family: var(--font-mono);
-        color: var(--fg-muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .footer-name {
+        font-size: 0.6875rem; /* 11px */
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .footer-tag {
+        font-size: 0.6875rem;
+        letter-spacing: 0.09em;
+        color: var(--stale-text);
       }
     </style>
   </body>

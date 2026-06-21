@@ -1,10 +1,15 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import StatusBadge from '@components/StatusBadge.astro';
-import MetricStat from '@components/MetricStat.astro';
 import ManifestPanel from '@components/ManifestPanel.astro';
-import { computeStaleNote, getProjects, type Manifest } from '@lib/manifests';
-// MaturityMeter now renders inside StatusBadge (the keystone pill, ph-34).
+import {
+  getHeartbeat,
+  getProjects,
+  metricsWithValues,
+  type Manifest,
+} from '@lib/manifests';
+// MaturityMeter renders inside StatusBadge; metrics render only when values
+// exist (else the heartbeat line shows "awaiting first report").
 
 export async function getStaticPaths() {
   return getProjects().map((project) => ({
@@ -36,7 +41,8 @@ const ctaVerb = {
 }[project.demo.type];
 
 const accent = project.accent_hex;
-const staleNote = computeStaleNote(project.last_heartbeat);
+const hb = getHeartbeat(project);
+const metrics = metricsWithValues(project);
 const started = new Date(`${project.started}-01T00:00:00`).toLocaleDateString(
   'en-US',
   { month: 'short', year: 'numeric' },
@@ -49,19 +55,39 @@ const started = new Date(`${project.started}-01T00:00:00`).toLocaleDateString(
     <header class="hero wrap">
       <a href="/#systems" class="back mono">← all systems</a>
       <div class="hero-badges">
-        <StatusBadge
-          status={project.status}
-          maturity={project.maturity}
-          staleNote={staleNote}
-        />
+        <StatusBadge status={project.status} maturity={project.maturity} />
         <span class="started mono">since {started}</span>
       </div>
       <h1>{project.name}</h1>
       <p class="tagline">{project.tagline}</p>
 
-      <div class="hero-metrics">
-        {project.metrics.map((m) => <MetricStat metric={m} />)}
+      <div class="hero-beat">
+        <span
+          class:list={[
+            'ci-heartbeat-dot',
+            { 'ci-heartbeat-dot--stale': hb.state === 'stale' },
+            { 'ci-heartbeat-dot--awaiting': hb.state === 'awaiting' },
+          ]}
+          aria-hidden="true"></span>
+        <span class:list={['hb-label mono', { awaiting: hb.state === 'awaiting' }]}>
+          {hb.label}
+        </span>
       </div>
+
+      {
+        metrics.length > 0 && (
+          <div class="hero-metrics">
+            {metrics.map((m) => (
+              <div class="hero-metric">
+                <span class="hm-value mono" data-metric-key={m.key}>
+                  {m.value}
+                </span>
+                <span class="hm-label mono">{m.label}</span>
+              </div>
+            ))}
+          </div>
+        )
+      }
 
       <a class="cta" href="#live">{ctaVerb} →</a>
 
@@ -104,16 +130,45 @@ const started = new Date(`${project.started}-01T00:00:00`).toLocaleDateString(
     font-size: clamp(2.2rem, 5vw, 3.4rem);
   }
   .tagline {
-    margin: 0.75rem 0 0;
-    color: var(--fg-muted);
+    margin: 0.85rem 0 0;
+    color: var(--faint);
     font-size: 1.15rem;
+    font-style: italic;
     max-width: 60ch;
+  }
+  .hero-beat {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-top: 1.5rem;
+  }
+  .hb-label {
+    font-size: 0.8125rem;
+    color: var(--stale-text);
+  }
+  .hb-label.awaiting {
+    font-style: italic;
   }
   .hero-metrics {
     display: flex;
     flex-wrap: wrap;
     gap: 2.5rem;
     margin-top: 2rem;
+  }
+  .hero-metric {
+    display: flex;
+    flex-direction: column;
+  }
+  .hm-value {
+    font-size: 1.75rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .hm-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-top: 0.4rem;
   }
   .cta {
     display: inline-block;
@@ -129,21 +184,6 @@ const started = new Date(`${project.started}-01T00:00:00`).toLocaleDateString(
   }
   .cta:hover {
     filter: brightness(1.08);
-  }
-  .stack {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    padding: 0;
-    margin: 2rem 0 0;
-  }
-  .stack li {
-    font-size: 0.72rem;
-    color: var(--fg-dim);
-    border: 1px solid var(--line-soft);
-    border-radius: 0.3rem;
-    padding: 0.2rem 0.55rem;
   }
   .body {
     margin-top: 1rem;

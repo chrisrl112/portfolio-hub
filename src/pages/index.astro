@@ -4,138 +4,127 @@ import ProjectCard from '@components/ProjectCard.astro';
 import { getProjects } from '@lib/manifests';
 
 const projects = getProjects();
-
 const liveCount = projects.filter((p) => p.status === 'live').length;
 ---
 
 <BaseLayout title="Compound Interests">
   <section class="hero wrap">
     <p class="kicker">Compound Interests · Systems that compound</p>
-    <h1 class="hero-line">Chris Liquin</h1>
-    <p class="hero-sub">I build and run AI systems.</p>
-
-    <div class="status-strip" role="list" aria-label="System status">
-      {
-        projects.map((p) => (
-          <a class="strip-item" role="listitem" href={p.links.page}>
-            <span
-              class:list={[
-                'ci-heartbeat-dot',
-                { 'ci-heartbeat-dot--stale': p.status !== 'live' },
-              ]}
-              aria-hidden="true"
-            />
-            <span class="strip-name">{p.name}</span>
-            <span class="strip-status mono">{p.status}</span>
-          </a>
-        ))
-      }
-    </div>
-    <p class="strip-note mono">
-      {liveCount} live · {projects.length} systems catalogued · last-activity
-      ticker wires up with heartbeats (P2)
+    <h1 class="hero-name">Chris Liquin</h1>
+    <p class="hero-tag">I build and run AI systems.</p>
+    <p class="hero-lede">
+      A personal AI lab. Each system runs itself, narrates itself, and gets
+      better from its own logged data — catalogued and run live here, so the
+      discipline is proven rather than asserted.
     </p>
+    <div class="hero-beat">
+      <span class="ci-heartbeat-dot" aria-hidden="true"></span>
+      <span class="beat-count mono">{liveCount}&nbsp;live&nbsp;·&nbsp;{projects.length}&nbsp;catalogued</span>
+      <span class="beat-clock mono">·&nbsp;<span data-utc-clock>--:--:--Z</span></span>
+    </div>
   </section>
 
   <section id="systems" class="systems wrap">
     <div class="systems-head">
       <h2>The systems</h2>
-      <p class="kicker">{projects.length} catalogued</p>
+      <span class="systems-count mono">{projects.length} catalogued</span>
     </div>
     <div class="grid">
       {projects.map((p) => <ProjectCard project={p} />)}
     </div>
   </section>
-
-  <section class="patterns-teaser wrap">
-    <a href="/patterns" class="teaser-link">
-      Patterns used across these systems: adversarial review, committee
-      synthesis, daily loops, human-approve gates →
-    </a>
-  </section>
 </BaseLayout>
+
+<script is:inline>
+  // Heartbeat timestamp — current UTC time, refreshed every second (DS §3).
+  // It's the live "now" readout, not a freshness claim; per-card dots show real
+  // per-system state.
+  (function () {
+    const pad = (n) => String(n).padStart(2, '0');
+    const els = document.querySelectorAll('[data-utc-clock]');
+    function tick() {
+      const d = new Date();
+      const t =
+        pad(d.getUTCHours()) +
+        ':' +
+        pad(d.getUTCMinutes()) +
+        ':' +
+        pad(d.getUTCSeconds()) +
+        'Z';
+      els.forEach((el) => (el.textContent = t));
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+</script>
 
 <style>
   .hero {
-    padding-top: 4.5rem;
-    padding-bottom: 3rem;
+    padding-top: 72px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--border);
   }
-  .hero-line {
-    max-width: 22ch;
-    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
-    margin: 0.8rem 0 0;
+  .kicker {
+    margin: 0 0 20px;
   }
-  .hero-sub {
-    max-width: 52ch;
-    margin-top: 1.1rem;
-    color: var(--fg-muted);
-    font-size: 1.05rem;
+  .hero-name {
+    margin: 0;
+    font-size: clamp(2.6rem, 7vw, 3.75rem); /* up to 60px */
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--text);
   }
-  .status-strip {
+  .hero-tag {
+    margin: 16px 0 0;
+    font-size: 1.125rem; /* 18px */
+    font-style: italic;
+    color: var(--faint);
+  }
+  .hero-lede {
+    margin: 22px 0 0;
+    max-width: 58ch;
+    font-size: 0.9375rem; /* 15px */
+    line-height: 1.65;
+    color: var(--body);
+  }
+  .hero-beat {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-top: 2rem;
-  }
-  .strip-item {
-    display: inline-flex;
     align-items: center;
-    gap: 0.55rem;
-    text-decoration: none;
-    border: 1px solid var(--line);
-    background: var(--ink-850);
-    border-radius: 999px;
-    padding: 0.4rem 0.85rem;
-    font-size: 0.85rem;
-    transition: border-color 0.18s ease;
+    gap: 11px;
+    margin-top: 30px;
   }
-  .strip-item:hover {
-    border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+  .beat-count {
+    font-size: 0.8125rem; /* 13px */
+    color: var(--body);
   }
-  .strip-status {
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--fg-dim);
-  }
-  .strip-note {
-    margin-top: 0.9rem;
-    font-size: 0.74rem;
-    color: var(--fg-dim);
+  .beat-clock {
+    font-size: 0.8125rem;
+    color: var(--muted);
   }
   .systems {
-    padding-top: 2rem;
+    padding-top: 48px;
+    padding-bottom: 64px;
   }
   .systems-head {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    border-bottom: 1px solid var(--line-soft);
-    padding-bottom: 0.75rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
   }
   .systems-head h2 {
     margin: 0;
-    font-size: 1.6rem;
+    font-size: 1.375rem; /* 22px */
+  }
+  .systems-count {
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-    gap: 1.1rem;
-  }
-  .patterns-teaser {
-    padding-top: 3rem;
-  }
-  .teaser-link {
-    display: block;
-    color: var(--fg-muted);
-    text-decoration: none;
-    font-family: var(--font-serif);
-    font-size: 1.25rem;
-    border-top: 1px solid var(--line-soft);
-    padding-top: 1.5rem;
-  }
-  .teaser-link:hover {
-    color: var(--fg);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: 20px;
   }
 </style>

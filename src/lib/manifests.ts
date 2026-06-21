@@ -47,6 +47,19 @@ export interface Manifest {
    * and the dormant invariant guard below (ph-15, §3.3 / §9.4).
    */
   last_heartbeat?: string;
+  /**
+   * Heartbeat contract (BUILD-AUDIT-round1 §D). ISO-8601 UTC of the system's
+   * last telemetry report, or null/absent if it has never reported. Drives the
+   * live-dot state (reporting / stale / awaiting first report).
+   */
+  last_report?: string | null;
+  /** One-line activity summary for the newest-first ticker (optional). */
+  last_activity?: string;
+  /**
+   * Real metric VALUES keyed by `metrics[].key`. A metric row renders only when
+   * its value exists here — no placeholder dashes (BUILD-AUDIT-round1 §3).
+   */
+  metric_values?: Record<string, string | number>;
   accent?: string;
   accent_hex?: string;
   visibility: { public: boolean };
@@ -88,6 +101,54 @@ function daysSince(lastActivity?: string | null, now: Date = new Date()): number
 export function computeStaleNote(lastActivity?: string | null, now: Date = new Date()): string {
   const d = daysSince(lastActivity, now);
   return d !== null && d >= 1 ? `No heartbeat in ${d}d` : '';
+}
+
+/**
+ * Live heartbeat (BUILD-AUDIT-round1 §D). A system is `reporting` if it has
+ * reported within STALE_THRESHOLD, `stale` if its last report is older, and
+ * `awaiting` if it has never reported (last_report null/absent). Drives the
+ * pulsing dot + label everywhere. No real telemetry is wired yet, so every
+ * system currently resolves to `awaiting first report` — honest, not faked.
+ */
+export type HeartbeatState = 'reporting' | 'stale' | 'awaiting';
+export interface Heartbeat {
+  state: HeartbeatState;
+  lastReport: string | null;
+  /** Human label: "reporting" | "last report Nd ago" | "awaiting first report". */
+  label: string;
+}
+
+const STALE_THRESHOLD_MS = 60 * 60 * 1000; // 1h (BUILD-AUDIT-round1 §D.3)
+
+function relativeAge(ms: number): string {
+  const m = Math.floor(ms / 60000);
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h`;
+  return `${Math.floor(h / 24)}d`;
+}
+
+export function getHeartbeat(manifest: Manifest, now: Date = new Date()): Heartbeat {
+  const ts = manifest.last_report ?? null;
+  const t = ts ? new Date(ts).getTime() : NaN;
+  if (!ts || Number.isNaN(t)) {
+    return { state: 'awaiting', lastReport: null, label: 'awaiting first report' };
+  }
+  const age = now.getTime() - t;
+  if (age <= STALE_THRESHOLD_MS) {
+    return { state: 'reporting', lastReport: ts, label: 'reporting' };
+  }
+  return { state: 'stale', lastReport: ts, label: `last report ${relativeAge(age)} ago` };
+}
+
+/** Metric definitions that actually have a value — the only rows a card renders. */
+export function metricsWithValues(
+  manifest: Manifest,
+): { label: string; key: string; value: string | number }[] {
+  const values = manifest.metric_values ?? {};
+  return manifest.metrics
+    .filter((m) => values[m.key] !== undefined && values[m.key] !== null)
+    .map((m) => ({ label: m.label, key: m.key, value: values[m.key] }));
 }
 
 const ajv = new Ajv({ allErrors: true });
