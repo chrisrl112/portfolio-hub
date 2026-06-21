@@ -14,13 +14,22 @@ interface Props {
   title: string;
   description?: string;
   accent?: string;
+  /** Link-preview card (ph-37). Pages pass "/og/<slug>.png"; defaults to the umbrella card. */
+  ogImage?: string;
 }
 
 const {
   title,
   description = 'Compound Interests — a catalogue of the AI systems I build, with live demos.',
   accent,
+  ogImage,
 } = Astro.props;
+
+// og:image / canonical must be absolute for LinkedIn + X — resolve against the
+// configured site origin (astro.config `site`). Project pages pass their own
+// card; everything else falls back to the umbrella card.
+const ogUrl = new URL(ogImage ?? '/og/home.png', Astro.site).href;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
 
 const fullTitle =
   title === 'Compound Interests' ? title : `${title} · Compound Interests`;
@@ -52,9 +61,21 @@ const year = new Date().getUTCFullYear();
     <meta name="generator" content={Astro.generator} />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
   </head>
   <body style={bodyStyle}>
     <header class="site-header">
