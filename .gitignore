@@ -25,6 +25,7 @@ pnpm-debug.log*
 
 .env
 .env.*
+!.env.example
 dist/
 node_modules/
 .DS_Store

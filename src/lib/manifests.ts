@@ -53,8 +53,11 @@ export interface Manifest {
    * live-dot state (reporting / stale / awaiting first report).
    */
   last_report?: string | null;
-  /** One-line activity summary for the newest-first ticker (optional). */
-  last_activity?: string;
+  /**
+   * Last real sign-of-life (ISO-8601 UTC), supplied by the heartbeat feed
+   * (ph-5). May differ from last_report; null/absent until a system reports.
+   */
+  last_activity?: string | null;
   /**
    * Real metric VALUES keyed by `metrics[].key`. A metric row renders only when
    * its value exists here — no placeholder dashes (BUILD-AUDIT-round1 §3).

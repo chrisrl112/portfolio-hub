@@ -2,8 +2,12 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectCard from '@components/ProjectCard.astro';
 import { getProjects } from '@lib/manifests';
+import { fetchHeartbeats, withHeartbeat } from '@lib/heartbeats';
 
-const projects = getProjects();
+// Build-time heartbeat feed (ph-5): fetch once, merge each project's telemetry
+// (last_report / metric_values) onto its manifest. Fails soft to "awaiting".
+const rows = await fetchHeartbeats();
+const projects = getProjects().map((p) => withHeartbeat(p, rows));
 const liveCount = projects.filter((p) => p.status === 'live').length;
 ---
 

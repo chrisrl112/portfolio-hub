@@ -8,13 +8,17 @@ import {
   metricsWithValues,
   type Manifest,
 } from '@lib/manifests';
+import { fetchHeartbeats, withHeartbeat } from '@lib/heartbeats';
 // MaturityMeter renders inside StatusBadge; metrics render only when values
 // exist (else the heartbeat line shows "awaiting first report").
 
 export async function getStaticPaths() {
+  // Build-time heartbeat feed (ph-5): merge live telemetry onto each manifest so
+  // the unchanged getHeartbeat()/metricsWithValues() below read fresh values.
+  const rows = await fetchHeartbeats();
   return getProjects().map((project) => ({
     params: { slug: project.slug },
-    props: { project },
+    props: { project: withHeartbeat(project, rows) },
   }));
 }
 
