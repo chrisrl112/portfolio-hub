@@ -27,7 +27,10 @@ const note: Record<DemoType, string> = {
   </div>
   <p class="demo-note">{note[demo.type]}</p>
   <div class="demo-meta mono">
-    {demo.url && <span>target: {demo.url}</span>}
+    {/* The live target URL is intentionally not printed: until P2/P4 wire the
+        real embed, a manifest demo.url may be a placeholder (e.g. an unfilled
+        Twitch channel) or just an internal anchor. Showing it would leak a
+        non-working target on a credibility-first page (§9.4, ph-22 QA). */}
     {demo.fallback && <span>fallback: {demo.fallback}</span>}
     <span class="pending">live surface wires up post-MVP (P2 / P4)</span>
   </div>
