@@ -9,6 +9,7 @@ import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import Wordmark from '@components/brand/Wordmark.astro';
 import CompoundingMark from '@components/brand/CompoundingMark.astro';
+import InterestCapture from '@components/InterestCapture.astro';
 import Analytics from '@vercel/analytics/astro';
 
 interface Props {
@@ -97,12 +98,15 @@ const year = new Date().getUTCFullYear();
     </main>
 
     <footer class="site-footer">
-      <div class="wrap footer-inner">
-        <span class="footer-mark">
-          <CompoundingMark size={20} title="Compound Interests" />
-          <span class="footer-name mono">Compound Interests</span>
-        </span>
-        <span class="footer-tag mono">systems that compound · {year}</span>
+      <div class="wrap">
+        <InterestCapture />
+        <div class="footer-inner">
+          <span class="footer-mark">
+            <CompoundingMark size={20} title="Compound Interests" />
+            <span class="footer-name mono">Compound Interests</span>
+          </span>
+          <span class="footer-tag mono">systems that compound · {year}</span>
+        </div>
       </div>
     </footer>
 

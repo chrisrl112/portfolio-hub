@@ -1,0 +1,141 @@
+---
+/**
+ * Footer interest-capture (ph-39 / ph-28=D Hybrid): follow links + one
+ * Buttondown email box + a mailto. Cookieless, no consent banner, no PII beyond
+ * the email a visitor chooses to submit. Each block renders only when its value
+ * is configured in src/lib/contact.ts — an unset field ships nothing, never a
+ * dead link (honest-by-construction, ph-22 QA). Styled with the live
+ * light/ci-bronze design tokens.
+ */
+import {
+  SOCIAL_LINKS,
+  BUTTONDOWN_ACTION_URL,
+  CONTACT_EMAIL,
+} from '@lib/contact';
+---
+
+<section class="capture" aria-label="Stay in touch">
+  {
+    BUTTONDOWN_ACTION_URL && (
+      <form
+        class="notify"
+        action={BUTTONDOWN_ACTION_URL}
+        method="post"
+        target="_blank"
+      >
+        <label class="notify-label mono" for="bd-email">
+          Get notified when a new system ships
+        </label>
+        <div class="notify-row">
+          <input
+            id="bd-email"
+            class="notify-input"
+            type="email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder="you@email.com"
+            aria-label="Email address"
+          />
+          <button class="notify-btn mono" type="submit">Notify me</button>
+        </div>
+      </form>
+    )
+  }
+
+  <div class="capture-links mono">
+    {
+      SOCIAL_LINKS.map((s) => (
+        <a
+          class="capture-link"
+          href={s.href}
+          target="_blank"
+          rel="me noopener noreferrer"
+        >
+          {s.label}
+        </a>
+      ))
+    }
+    <a class="capture-link" href={`mailto:${CONTACT_EMAIL}`}>Email</a>
+  </div>
+</section>
+
+<style>
+  .capture {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px 32px;
+    padding-block: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  /* Email box */
+  .notify {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: min(320px, 100%);
+  }
+  .notify-label {
+    font-size: 0.6875rem; /* 11px */
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .notify-row {
+    display: flex;
+    gap: 8px;
+  }
+  .notify-input {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 12px;
+    font-size: 0.8125rem; /* 13px */
+    color: var(--text);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+  }
+  .notify-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .notify-input::placeholder {
+    color: var(--stale-text);
+  }
+  .notify-btn {
+    flex: none;
+    padding: 9px 16px;
+    font-size: 0.6875rem; /* 11px */
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--on-accent);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-card);
+    cursor: pointer;
+    transition: filter 0.18s ease;
+  }
+  .notify-btn:hover {
+    filter: brightness(1.08);
+  }
+  /* Follow links + mailto */
+  .capture-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+  }
+  .capture-link {
+    font-size: 0.6875rem; /* 11px */
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.18s ease;
+  }
+  .capture-link:hover {
+    color: var(--accent);
+  }
+</style>
