@@ -75,7 +75,7 @@ Work the top **"🛠 Ready to ship"** item by priority. **Do NOT** use `docs/BUI
 **When you finish shipping an item, close the loop back to Cowork:**
 1. In `CODE-QUEUE.md`, move the item to the **"✅ Shipped"** section with today's date.
 2. Append ONE line to the handoff inbox so the night shift + clerk reconcile it:
-   `/Users/chrisliquin/Documents/Claude/Projects/Mission Control/handoff_inbox.jsonl`
+   `/Users/chrisliquin/Documents/Claude/Projects/Mission Control/data/handoff_inbox.jsonl`
    ```json
    {"ts":"<ISO8601>","project":"portfolio-hub","cwd":"<this repo path>","summary":"shipped <ph-id>: <what>","done":["..."],"next":["..."],"blockers":[],"owner":"Chris"}
    ```
