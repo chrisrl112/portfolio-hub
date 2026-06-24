@@ -49,7 +49,6 @@
     "page": "/projects/speakeasy-growroom"
   },
   "metrics": [
-    { "label": "Days running", "source": "heartbeat", "key": "uptime_days" },
     { "label": "Cycle day", "source": "heartbeat", "key": "cycle_day" },
     { "label": "Anomalies caught", "source": "heartbeat", "key": "alerts_total" }
   ],
