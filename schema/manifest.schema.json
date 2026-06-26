@@ -76,6 +76,10 @@
       "type": "object",
       "additionalProperties": { "type": ["string", "number"] }
     },
+    "tile_media": {
+      "description": "Optional homepage 'living window' tile media — an absolute path to a real, recent screenshot/loop of the system (never a fabricated feed). When set, ProjectCard renders it as the tile image; when absent, the card renders as today (ph-43).",
+      "type": "string"
+    },
     "accent": {
       "description": "Per-project accent token name (one accent color per project, §4.5).",
       "type": "string"

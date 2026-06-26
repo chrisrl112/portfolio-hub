@@ -1,5 +1,7 @@
 ---
 import type { Demo, DemoType } from '@lib/manifests';
+import GrowroomEmbed from '@components/casestudy/GrowroomEmbed.astro';
+import { GROWROOM_SLUG, GROWROOM_CHANNEL } from '@lib/growroom';
 
 interface Props {
   demo: Demo;
@@ -7,6 +9,12 @@ interface Props {
   slug: string;
 }
 const { demo, slug } = Astro.props;
+
+// ph-43: the Growroom embed is the first real `embed` surface. Render the live
+// "living window" only when it's the Growroom AND a channel is configured;
+// otherwise (unconfigured, or any other embed) fall back to the honest
+// placeholder below (State C — dormant-by-default, never a broken player).
+const showGrowroom = demo.type === 'embed' && slug === GROWROOM_SLUG && !!GROWROOM_CHANNEL;
 
 const verb: Record<DemoType, string> = {
   embed: 'Watch it live',
@@ -23,19 +31,27 @@ const note: Record<DemoType, string> = {
 ---
 
 <div class="demo" data-demo-root data-demo-slug={slug} data-demo-type={demo.type}>
-  <div class="demo-head">
-    <span class="demo-type mono">{demo.type}</span>
-    <span class="demo-verb">{verb[demo.type]}</span>
-  </div>
-  <p class="demo-note">{note[demo.type]}</p>
-  <div class="demo-meta mono">
-    {/* The live target URL is intentionally not printed: until P2/P4 wire the
-        real embed, a manifest demo.url may be a placeholder (e.g. an unfilled
-        Twitch channel) or just an internal anchor. Showing it would leak a
-        non-working target on a credibility-first page (§9.4, ph-22 QA). */}
-    {demo.fallback && <span>fallback: {demo.fallback}</span>}
-    <span class="pending">live surface wires up post-MVP (P2 / P4)</span>
-  </div>
+  {
+    showGrowroom ? (
+      <GrowroomEmbed />
+    ) : (
+      <>
+        <div class="demo-head">
+          <span class="demo-type mono">{demo.type}</span>
+          <span class="demo-verb">{verb[demo.type]}</span>
+        </div>
+        <p class="demo-note">{note[demo.type]}</p>
+        <div class="demo-meta mono">
+          {/* The live target URL is intentionally not printed: until P2/P4 wire the
+              real embed, a manifest demo.url may be a placeholder (e.g. an unfilled
+              Twitch channel) or just an internal anchor. Showing it would leak a
+              non-working target on a credibility-first page (§9.4, ph-22 QA). */}
+          {demo.fallback && <span>fallback: {demo.fallback}</span>}
+          <span class="pending">live surface wires up post-MVP (P2 / P4)</span>
+        </div>
+      </>
+    )
+  }
 </div>
 
 <script>

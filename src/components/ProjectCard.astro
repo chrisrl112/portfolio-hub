@@ -15,7 +15,20 @@ const hb = getHeartbeat(project);
 const ctaVerb = project.demo.type === 'launch' ? 'Open the demo' : 'View case study';
 ---
 
-<a class="card" href={project.links.page} data-capsule-slug={project.slug}>
+<a
+  class:list={['card', { 'card--media': !!project.tile_media }]}
+  href={project.links.page}
+  data-capsule-slug={project.slug}
+>
+  {
+    project.tile_media && (
+      <div class="card-media">
+        {/* "Living window" tile (ph-43): a real, recent capture of the system,
+            not a live feed — decorative, so it's hidden from a11y tree. */}
+        <img src={project.tile_media} alt="" loading="lazy" decoding="async" />
+      </div>
+    )
+  }
   <div class="card-body">
     <StatusBadge status={project.status} maturity={project.maturity} />
 
@@ -84,6 +97,26 @@ const ctaVerb = project.demo.type === 'launch' ? 'Open the demo' : 'View case st
     transform: translateY(-2px);
     border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
     border-top-color: var(--accent);
+  }
+  /* "Living window" tile media (ph-43) — a real 16:9 capture above the body. */
+  .card--media {
+    overflow: hidden;
+  }
+  .card-media {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #000;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .card--media:hover .card-media img {
+    transform: scale(1.03);
   }
   .card-body {
     display: flex;

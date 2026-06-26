@@ -63,6 +63,12 @@ export interface Manifest {
    * its value exists here — no placeholder dashes (BUILD-AUDIT-round1 §3).
    */
   metric_values?: Record<string, string | number>;
+  /**
+   * Optional homepage "living window" tile media (ph-43): an absolute path to a
+   * real, recent capture of the system. ProjectCard renders it when set; absent
+   * ⇒ the card renders as today. Never a fabricated feed.
+   */
+  tile_media?: string;
   accent?: string;
   accent_hex?: string;
   visibility: { public: boolean };

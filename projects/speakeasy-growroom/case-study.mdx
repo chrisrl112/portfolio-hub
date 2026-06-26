@@ -3,7 +3,6 @@ import flowchart from './flowchart.mmd?raw';
 import Section from '@components/casestudy/Section.astro';
 import Loops from '@components/casestudy/Loops.astro';
 import Roles from '@components/casestudy/Roles.astro';
-import Demo from '@components/casestudy/Demo.astro';
 import MetricDefs from '@components/casestudy/MetricDefs.astro';
 import Mermaid from '@components/casestudy/Mermaid.astro';
 
@@ -58,13 +57,13 @@ Three named AI roles sit on top of a deterministic control layer:
 
 </Section>
 
-<Section n="07" title="Live" id="live">
+<Section n="07" title="Live">
 
-<Demo demo={manifest.demo} slug={manifest.slug} />
+*The live window is at the top of this page.*
 
-**What you see:** a live Twitch embed of the room — plants under lights, the current cycle in progress — with a telemetry panel beside it reading the latest heartbeat metrics (days running, cycle day, current temperature + humidity, anomalies caught to date). The most recent AI daily report is shown as an overlay so a visitor can read, in plain language, what the room did today.
+**What you see:** a live Twitch embed of the room — plants under lights, the current cycle in progress — with a telemetry strip reading the latest heartbeat metrics (cycle day + anomalies caught to date). When the grow isn't broadcasting, the player shows the channel's offline card rather than going dark, so the page is never a black box.
 
-**What you do:** mostly watch. When Twitch is offline, the panel falls back to the latest cycle **timelapse** rather than going dark, so the page is never blank.
+**What you do:** mostly watch.
 
 *Opsec note: no street-level or location-identifying detail appears in the stream, overlay, or copy.*
 

@@ -2,6 +2,7 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import StatusBadge from '@components/StatusBadge.astro';
 import ManifestPanel from '@components/ManifestPanel.astro';
+import Demo from '@components/casestudy/Demo.astro';
 import {
   getHeartbeat,
   getProjects,
@@ -9,6 +10,7 @@ import {
   type Manifest,
 } from '@lib/manifests';
 import { fetchHeartbeats, withHeartbeat } from '@lib/heartbeats';
+import { GROWROOM_SLUG, GROWROOM_CHANNEL } from '@lib/growroom';
 // MaturityMeter renders inside StatusBadge; metrics render only when values
 // exist (else the heartbeat line shows "awaiting first report").
 
@@ -45,6 +47,12 @@ const ctaVerb = {
 }[project.demo.type];
 
 const accent = project.accent_hex;
+// ph-43: the Growroom live embed is the headline surface — render it at the TOP
+// of the page (right under the hero), not down in §07, so it's the first thing a
+// visitor sees on click-in. Routed through <Demo> so the ph-27 demo_start
+// binding stays intact. Other projects keep their demo in §07.
+const showLiveEmbed =
+  project.demo.type === 'embed' && project.slug === GROWROOM_SLUG && !!GROWROOM_CHANNEL;
 const hb = getHeartbeat(project);
 const metrics = metricsWithValues(project);
 const started = new Date(`${project.started}-01T00:00:00`).toLocaleDateString(
@@ -99,6 +107,14 @@ const started = new Date(`${project.started}-01T00:00:00`).toLocaleDateString(
       }
 
       <a class="cta" href="#live">{ctaVerb} →</a>
+
+      {
+        showLiveEmbed && (
+          <section id="live" class="hero-live">
+            <Demo demo={project.demo} slug={project.slug} />
+          </section>
+        )
+      }
 
       <ManifestPanel manifest={project} />
     </header>
@@ -193,6 +209,11 @@ const started = new Date(`${project.started}-01T00:00:00`).toLocaleDateString(
   }
   .cta:hover {
     filter: brightness(1.08);
+  }
+  /* ph-43: live embed promoted under the hero — the headline surface. */
+  .hero-live {
+    margin-top: 2.25rem;
+    scroll-margin-top: 1.5rem;
   }
   .body {
     margin-top: 1rem;

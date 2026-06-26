@@ -8,6 +8,7 @@
   "started": "2025-11",
   "accent": "grow-green",
   "accent_hex": "#3FB562",
+  "tile_media": "/media/growroom/growroom-tile.jpg",
   "visibility": { "public": true },
   "stack": [
     "VIVOSUN GrowHub controller (climate)",
@@ -42,8 +43,8 @@
   ],
   "demo": {
     "type": "embed",
-    "url": "https://player.twitch.tv/?channel=CHANNEL&parent=chrisliquin.com",
-    "fallback": "timelapse"
+    "url": "https://www.twitch.tv/chrisliquin",
+    "fallback": "twitch-offline-card"
   },
   "links": {
     "page": "/projects/speakeasy-growroom"

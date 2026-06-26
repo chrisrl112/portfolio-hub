@@ -1,0 +1,208 @@
+---
+/**
+ * Growroom "living window" (ph-43) — the hub's first live "DO" surface.
+ *
+ * The live Twitch player is the centerpiece: a visitor watches the room from the
+ * portfolio hub. Beneath it sits a 2-metric telemetry strip fed by the
+ * ph-5/ph-23 heartbeat (cycle_day + alerts_total — uptime_days was dropped by
+ * ph-23) and an "open on Twitch" link.
+ *
+ * Honest by construction: the Twitch player self-reports its own live/offline
+ * state (Twitch shows the channel's offline card when the broadcast is down —
+ * never a false "live" claim, never a black box), and the telemetry strip is
+ * baked at build time, failing soft to `—` on any read failure. NO Twitch
+ * secret, NO live-broadcast API detection.
+ *
+ * (State C — no channel configured — is handled upstream in Demo.astro, which
+ * falls back to the placeholder. This component renders only when a channel is
+ * set.)
+ */
+import { getProject, getHeartbeat, computeStaleNote, type Heartbeat } from '@lib/manifests';
+import { fetchHeartbeats, withHeartbeat } from '@lib/heartbeats';
+import { GROWROOM_SLUG, GROWROOM_CHANNEL, GROWROOM_TWITCH_URL, growroomPlayerSrc } from '@lib/growroom';
+
+// Build-time heartbeat read (fail-soft → empty Map → `—` metrics, awaiting dot).
+const rows = await fetchHeartbeats();
+const base = getProject(GROWROOM_SLUG);
+const project = base ? withHeartbeat(base, rows) : undefined;
+
+const hb: Heartbeat = project
+  ? getHeartbeat(project)
+  : { state: 'awaiting', lastReport: null, label: 'awaiting first report' };
+
+// The 2 declared metrics. Map over the manifest definitions so an unbound metric
+// renders `—`, never a guess; any future third slot would render `—` too.
+const values = project?.metric_values ?? {};
+const strip = (project?.metrics ?? []).map((m) => ({
+  label: m.label,
+  key: m.key,
+  value: values[m.key] ?? '—',
+}));
+
+// Optional caption: the heartbeat `note` (a short, public-safe report headline),
+// rendered only when present (null today → nothing). withHeartbeat() drops note,
+// so read it from the raw row.
+const caption = rows.get(GROWROOM_SLUG)?.note ?? null;
+
+const staleNote = computeStaleNote(project?.last_report ?? null);
+const telemetryNote =
+  hb.state === 'reporting'
+    ? 'Telemetry is reporting live from the room.'
+    : hb.state === 'awaiting'
+      ? 'Telemetry has not reported yet.'
+      : `Telemetry is quiet right now${staleNote ? ` (${staleNote})` : ''}.`;
+
+// Twitch only renders on hosts listed in parent=. Allowlist localhost for local
+// preview — automatically in `astro dev`, or in a built preview by setting
+// PUBLIC_TWITCH_PARENT_LOCALHOST=1. A normal prod build keeps just the two real
+// chrisliquin.com origins.
+const allowLocalhost =
+  import.meta.env.DEV || import.meta.env.PUBLIC_TWITCH_PARENT_LOCALHOST === '1';
+const playerSrc = growroomPlayerSrc(
+  GROWROOM_CHANNEL,
+  allowLocalhost ? ['localhost', '127.0.0.1'] : [],
+);
+---
+
+<div class="living-window">
+  <div class="lw-frame">
+    <iframe
+      src={playerSrc}
+      height="100%"
+      width="100%"
+      allowfullscreen
+      sandbox="allow-scripts allow-same-origin allow-presentation"
+      title="Speakeasy Growroom — live on Twitch"
+      loading="lazy"></iframe>
+  </div>
+
+  {caption && <p class="lw-caption">{caption}</p>}
+
+  <div class="lw-strip" role="group" aria-label="Growroom live telemetry">
+    {
+      strip.map((m) => (
+        <div class="lw-metric">
+          <span class="lw-value mono" data-metric-key={m.key} data-metric-source="heartbeat">
+            {m.value}
+          </span>
+          <span class="lw-label mono">{m.label}</span>
+        </div>
+      ))
+    }
+    <span
+      class:list={[
+        'lw-dot',
+        { 'lw-dot--stale': hb.state === 'stale' },
+        { 'lw-dot--awaiting': hb.state === 'awaiting' },
+      ]}
+      aria-hidden="true"></span>
+    <span class:list={['lw-hb mono', { quiet: hb.state !== 'reporting' }]}>{hb.label}</span>
+  </div>
+
+  <p class="lw-note">
+    {telemetryNote} The player streams the room live when the grow is broadcasting; when it’s
+    offline, Twitch shows the channel’s offline card.
+    <a class="lw-open" href={GROWROOM_TWITCH_URL} target="_blank" rel="noopener noreferrer"
+      >Open on Twitch ↗</a
+    >
+  </p>
+</div>
+
+<style>
+  .living-window {
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--accent) 5%, var(--panel));
+    padding: 1.25rem;
+  }
+
+  /* 16:9 responsive frame for the live player. */
+  .lw-frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.45rem;
+    overflow: hidden;
+    background: #000;
+    border: 1px solid var(--border);
+  }
+  .lw-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .lw-caption {
+    margin: 1.1rem 0 0;
+    font-size: 0.95rem;
+    color: var(--fg-muted);
+    border-left: 2px solid var(--accent);
+    padding-left: 0.75rem;
+  }
+
+  /* Telemetry strip — mirrors the hero/card metric treatment. */
+  .lw-strip {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    margin-top: 1.1rem;
+  }
+  .lw-metric {
+    display: flex;
+    flex-direction: column;
+  }
+  .lw-value {
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .lw-label {
+    font-size: 0.66rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-top: 0.35rem;
+  }
+  .lw-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    flex: none;
+    margin-left: auto;
+    animation: ciPulse var(--pulse-duration) ease-out infinite;
+  }
+  .lw-dot--stale {
+    background: var(--dot-empty);
+    animation: none;
+  }
+  .lw-dot--awaiting {
+    background: transparent;
+    border: 1px solid var(--dot-empty);
+    box-sizing: border-box;
+    animation: none;
+  }
+  .lw-hb {
+    font-size: 0.72rem;
+    color: var(--stale-text);
+  }
+  .lw-hb.quiet {
+    font-style: italic;
+  }
+
+  .lw-note {
+    margin: 1.1rem 0 0;
+    font-size: 0.85rem;
+    color: var(--fg-muted);
+  }
+  .lw-open {
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .lw-open:hover {
+    text-decoration: underline;
+  }
+</style>
